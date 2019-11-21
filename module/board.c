@@ -27,12 +27,14 @@ typedef struct {
 } _db_board_index_entry_t;
 
 size_t _get_board_name(char* strbuf, size_t bufsize);
+size_t _get_board_mcu(char* strbuf, size_t bufsize);
 int _get_board_ram(void);
 int _get_board_clock(void);
 int _get_board_nonvolatile(void);
 
 static _db_board_index_entry_t _db_board_index[] = {
     {"name", db_node_type_str, (void (*)(void)) _get_board_name},
+    {"mcu", db_node_type_str, (void (*)(void)) _get_board_mcu},
     {"ram", db_node_type_int, (void (*)(void)) _get_board_ram},
     {"clock", db_node_type_int, (void (*)(void)) _get_board_clock},
     {"nonvolatile", db_node_type_int, (void (*)(void)) _get_board_nonvolatile}
@@ -41,7 +43,12 @@ static _db_board_index_entry_t _db_board_index[] = {
 #define _DB_BOARD_INDEX_NUMOF (sizeof(_db_board_index) / sizeof(_db_board_index_entry_t))
 
 size_t _get_board_name(char* strbuf, size_t bufsize) {
-    strncpy(strbuf, "Test Board", bufsize);
+    strncpy(strbuf, RIOT_BOARD, bufsize);
+    return strlen(strbuf);
+}
+
+size_t _get_board_mcu(char* strbuf, size_t bufsize) {
+    strncpy(strbuf, RIOT_MCU, bufsize);
     return strlen(strbuf);
 }
 
