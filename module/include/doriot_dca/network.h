@@ -13,18 +13,21 @@
  *
  * @author  Frank Engelhardt <fengelha@ovgu.de>
  */
-#ifndef DORIOT_DCA_H
-#define DORIOT_DCA_H
-
-#include <doriot_dca/fs.h>
+#ifndef DORIOT_DCA_NETWORK_H
+#define DORIOT_DCA_NETWORK_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @brief   A simple string message
+ */
+extern char *external_module_message;
 
 #ifdef __cplusplus
 }
 #endif
 
 /** @} */
-#endif /* DORIOT_DCA_H */
+#endif

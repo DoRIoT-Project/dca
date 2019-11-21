@@ -5,6 +5,19 @@ APPLICATION = doriot_dca_test
 BOARD ?= esp32-wroom-32
 BOARD_WHITELIST = esp32-wroom-32 native
 
+# Blacklisting msp430-based boards, as file syscalls are not supported
+BOARD_BLACKLIST :=  chronos \
+                    msb-430 \
+                    msb-430h \
+                    telosb \
+                    wsn430-v1_3b \
+                    wsn430-v1_4 \
+                    z1 \
+                    #
+
+BOARD_INSUFFICIENT_MEMORY := arduino-duemilanove arduino-leonardo arduino-nano \
+					         arduino-uno nucleo-f031k6
+
 RIOTBASE ?= $(CURDIR)/../..
 
 EXTERNAL_MODULE_DIRS += $(CURDIR)/module
@@ -23,6 +36,10 @@ USEMODULE += shell_commands
 USEMODULE += od
 USEMODULE += fmt
 USEMODULE += doriot_dca
+USEMODULE += ps
+USEMODULE += vfs
+
+CFLAGS += -DVFS_DIR_BUFFER_SIZE=16 -DVFS_FILE_BUFFER_SIZE=16
 
 DEVELHELP ?= 1
 

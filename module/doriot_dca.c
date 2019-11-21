@@ -15,5 +15,3 @@
  */
 
 #include "doriot_dca.h"
-
-char *external_module_message = "Linking worked";
