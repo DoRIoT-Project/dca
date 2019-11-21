@@ -309,7 +309,12 @@ static void _dcafs_write_stat(const db_node_t *node, struct stat *restrict buf)
     assert(node && !db_node_is_null(node));
     memset(buf, 0, sizeof(*buf));
     buf->st_nlink = 1;
-    buf->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
+    if(db_node_get_type(node) == db_node_type_inner) {
+        buf->st_mode = S_IFDIR | S_IRUSR | S_IRGRP | S_IROTH;
+    }
+    else {
+        buf->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
+    }
     buf->st_size = db_node_get_size(node);
     buf->st_blocks = db_node_get_size(node);
     buf->st_blksize = sizeof(uint8_t);
