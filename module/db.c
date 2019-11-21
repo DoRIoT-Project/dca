@@ -85,7 +85,13 @@ void db_node_set_null(db_node_t* node) {
 
 int db_node_is_null(const db_node_t *node) {
     assert(node);
-    return (node->ops->get_type_fn(node) == db_node_type_null);
+    return (db_node_get_type(node) == db_node_type_null);
+}
+
+void db_node_copy(db_node_t *dest, const db_node_t *src) {
+    assert(dest);
+    assert(src);
+    memcpy(dest, src, sizeof(db_node_t));
 }
 
 static db_node_ops_t _db_root_ops = {
@@ -128,12 +134,12 @@ int db_find_node_by_path(const char *path, db_node_t *node) {
         assert(!db_node_is_null(node));
         size_t len = s_pos - tok;
         do { /* for every folder in node */
-            node->ops->get_next_child_fn(node, &child_node);
+            db_node_get_next_child(node, &child_node);
             if(db_node_is_null(&child_node)) {
                 /* we have searched through all entries */
                 return -ENOENT;
             }
-            child_node.ops->get_name_fn(&child_node, name_buf);
+            db_node_get_name(&child_node, name_buf);
         }
         while(memcmp(tok, name_buf, len) != 0);
         /* folder found, now descent */
@@ -144,4 +150,55 @@ int db_find_node_by_path(const char *path, db_node_t *node) {
         if(s_pos == NULL) s_pos = path_end;
     }
     return 0; /* yay :) */
+}
+
+char* db_node_get_name(const db_node_t *node, char name[DB_NODE_NAME_MAX]) {
+    assert(node);
+    assert(node->ops->get_name_fn);
+    return node->ops->get_name_fn(node, name);
+}
+
+int db_node_get_next_child(db_node_t *node, db_node_t *next_child) {
+    assert(node);
+    assert(node->ops->get_next_child_fn);
+    return node->ops->get_next_child_fn(node, next_child);
+}
+
+int db_node_get_next(db_node_t *node, db_node_t *next) {
+    assert(node);
+    assert(node->ops->get_next_fn);
+    return node->ops->get_next_fn(node, next);
+}
+
+db_node_type_t db_node_get_type(const db_node_t *node) {
+    assert(node);
+    assert(node->ops->get_type_fn);
+    return node->ops->get_type_fn(node);
+}
+
+size_t db_node_get_size(const db_node_t *node) {
+    assert(node);
+    assert(node->ops->get_size_fn);
+    return node->ops->get_size_fn(node);
+}
+
+int32_t db_node_get_int_value(const db_node_t *node) {
+    assert(node->ops->get_int_value_fn);
+    assert(node);
+    assert(db_node_get_type(node) == db_node_type_int);
+    return node->ops->get_int_value_fn(node);
+}
+
+float db_node_get_float_value(const db_node_t *node) {
+    assert(node);
+    assert(node->ops->get_float_value_fn);
+    assert(db_node_get_type(node) == db_node_type_float);
+    return node->ops->get_float_value_fn(node);
+}
+
+size_t db_node_get_str_value(const db_node_t *node, char *value, size_t bufsize) {
+    assert(node);
+    assert(node->ops->get_str_value_fn);
+    assert(db_node_get_type(node) == db_node_type_str);
+    return node->ops->get_str_value_fn(node, value, bufsize);
 }

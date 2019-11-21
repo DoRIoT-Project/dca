@@ -193,7 +193,7 @@ size_t _board_node_get_size (const db_node_t *node) {
         case db_node_type_float:
             return sizeof(float);
         case db_node_type_str:
-            return node->ops->get_str_value_fn(node, buf, 128);
+            return db_node_get_str_value(node, buf, 128);
         default:
             assert(0);
         }
@@ -202,8 +202,6 @@ size_t _board_node_get_size (const db_node_t *node) {
 }
 
 int32_t _board_node_get_int_value (const db_node_t *node) {
-    assert(node);
-    assert(node->ops->get_type_fn(node) == db_node_type_int);
     _db_board_node_private_data_t *private_data =
         (_db_board_node_private_data_t*) node->private_data.u8;
     assert(private_data->idx < _DB_BOARD_INDEX_NUMOF);
@@ -212,8 +210,6 @@ int32_t _board_node_get_int_value (const db_node_t *node) {
 }
 
 float _board_node_get_float_value (const db_node_t *node) {
-    assert(node);
-    assert(node->ops->get_type_fn(node) == db_node_type_float);
     _db_board_node_private_data_t *private_data =
         (_db_board_node_private_data_t*) node->private_data.u8;
     assert(private_data->idx < _DB_BOARD_INDEX_NUMOF);
@@ -222,8 +218,6 @@ float _board_node_get_float_value (const db_node_t *node) {
 }
 
 size_t _board_node_get_str_value (const db_node_t *node, char *value, size_t bufsize) {
-    assert(node);
-    assert(node->ops->get_type_fn(node) == db_node_type_str);
     _db_board_node_private_data_t *private_data =
         (_db_board_node_private_data_t*) node->private_data.u8;
     assert(private_data->idx < _DB_BOARD_INDEX_NUMOF);

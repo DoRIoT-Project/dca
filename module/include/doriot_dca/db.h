@@ -69,6 +69,10 @@ typedef struct {
     } private_data;
 } db_node_t;
 
+/**
+ * Node operations.
+ * They should not be called directly, but through their respective wrappers.
+ */
 struct db_node_ops {
     char* (*get_name_fn) (const db_node_t *node, char name[DB_NODE_NAME_MAX]);
     int (*get_next_child_fn) (db_node_t *node, db_node_t *next_child);
@@ -86,8 +90,29 @@ void db_get_root(db_node_t* node);
 void db_node_set_null(db_node_t* node);
 /** Return 1 if node is a null node */
 int db_node_is_null(const db_node_t *node);
+/** Copy node */
+void db_node_copy(db_node_t *dest, const db_node_t *src);
 /** Return a node by its path name, relative to the root. */
 int db_find_node_by_path(const char *path, db_node_t *node);
+
+/* Ops wrappers */
+
+/** Get name of node */
+char* db_node_get_name(const db_node_t *node, char name[DB_NODE_NAME_MAX]);
+/** Iterate through children of node, terminating with a null node */
+int db_node_get_next_child(db_node_t *node, db_node_t *next_child);
+/** Get the neighbor of this node. TODO: Not implemented everywhere */
+int db_node_get_next(db_node_t *node, db_node_t *next);
+/** Get type of the node */
+db_node_type_t db_node_get_type(const db_node_t *node);
+/** Get size of the node's data, if it is a leaf node */
+size_t db_node_get_size(const db_node_t *node);
+/** Get value of node, if it has db_node_type_int */
+int32_t db_node_get_int_value(const db_node_t *node);
+/** Get value of node, if it has db_node_type_float */
+float db_node_get_float_value(const db_node_t *node);
+/** Get value of node, if it has db_node_type_str */
+size_t db_node_get_str_value(const db_node_t *node, char *value, size_t bufsize);
 
 #ifdef __cplusplus
 }

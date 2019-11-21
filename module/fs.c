@@ -179,7 +179,7 @@ static off_t dcafs_lseek(vfs_file_t *filp, off_t off, int whence)
             off += filp->pos;
             break;
         case SEEK_END:
-            off += node->ops->get_size_fn(node);
+            off += db_node_get_size(node);
             break;
         default:
             return -EINVAL;
@@ -221,23 +221,23 @@ static ssize_t dcafs_read(vfs_file_t *filp, void *dest, size_t nbytes)
     /* we could also make the bufer static and use mutexes to make
        it thread-safe, because we should not have too many users */
     char data[DCAFS_MAX_STR_LEN];
-    switch(node->ops->get_type_fn(node)) {
+    switch(db_node_get_type(node)) {
     case db_node_type_int:
         {
-            int32_t val = node->ops->get_int_value_fn(node);
+            int32_t val = db_node_get_int_value(node);
             size = fmt_s64_dec(data, val);
         }
         break;
     case db_node_type_float:
         {
-            float val = node->ops->get_float_value_fn(node);
+            float val = db_node_get_float_value(node);
             /* TODO: according to doc this func uses up to 2.4kB code,
                it should become optional in some way. */
             size = fmt_float(data, val, DCAFS_FLOAT_PRECISION);
         }
         break;
     case db_node_type_str:
-        size = node->ops->get_str_value_fn(node, data, DCAFS_MAX_STR_LEN);
+        size = db_node_get_str_value(node, data, DCAFS_MAX_STR_LEN);
         break;
     default:
         DEBUG("dcafs_read: illegal node type\n");
@@ -288,7 +288,7 @@ static int dcafs_readdir(vfs_DIR *dirp, vfs_dirent_t *entry)
     DEBUG("constfs_readdir: %p, %p\n", (void *)dirp, (void *)entry);
     db_node_t *dir = (db_node_t*) dirp->private_data.buffer;
     db_node_t node;
-    dir->ops->get_next_child_fn(dir, &node);
+    db_node_get_next_child(dir, &node);
     if (db_node_is_null(&node)) {
         return 0;
     }
@@ -310,7 +310,7 @@ static void _dcafs_write_stat(const db_node_t *node, struct stat *restrict buf)
     memset(buf, 0, sizeof(*buf));
     buf->st_nlink = 1;
     buf->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH;
-    buf->st_size = node->ops->get_size_fn(node);
-    buf->st_blocks = node->ops->get_size_fn(node);
+    buf->st_size = db_node_get_size(node);
+    buf->st_blocks = db_node_get_size(node);
     buf->st_blksize = sizeof(uint8_t);
 }
