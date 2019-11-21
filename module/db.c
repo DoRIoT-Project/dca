@@ -22,18 +22,18 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
-db_node_type_t _db_node_null_get_type(const db_node *node) {
+db_node_type_t _db_node_null_get_type(const db_node_t *node) {
     assert(node);
     return db_node_type_null;
 }
 
-char* _root_get_name (const db_node *node, char name[DB_NODE_NAME_MAX]) {
+char* _root_get_name (const db_node_t *node, char name[DB_NODE_NAME_MAX]) {
     (void) node;
     strncpy(name, "/", DB_NODE_NAME_MAX);
     return name;
 }
 
-int _root_get_next_child (db_node *node, db_node *next_child) {
+int _root_get_next_child (db_node_t *node, db_node_t *next_child) {
     assert(node);
     assert(next_child);
     uint8_t idx = node->private_data.u8[0];
@@ -49,19 +49,19 @@ int _root_get_next_child (db_node *node, db_node *next_child) {
     return 0;
 }
 
-int _root_get_next (db_node *node, db_node *next) {
+int _root_get_next (db_node_t *node, db_node_t *next) {
     assert(node);
     assert(next);
     db_node_set_null(next);
     return 0;
 }
 
-db_node_type_t _root_get_type (const db_node *node) {
+db_node_type_t _root_get_type (const db_node_t *node) {
     (void) node;
     return db_node_type_inner;
 }
 
-size_t _root_get_size (const db_node *node) {
+size_t _root_get_size (const db_node_t *node) {
     (void) node;
     return 0u;
 }
@@ -77,13 +77,13 @@ static db_node_ops_t _db_node_null_ops = {
     .get_str_value_fn = NULL
 };
 
-void db_node_set_null(db_node* node) {
+void db_node_set_null(db_node_t* node) {
     assert(node);
     node->ops = &_db_node_null_ops;
     memset(node->private_data.u8, 0, DB_NODE_PRIVATE_DATA_MAX);
 }
 
-int db_node_is_null(const db_node *node) {
+int db_node_is_null(const db_node_t *node) {
     assert(node);
     return (node->ops->get_type_fn(node) == db_node_type_null);
 }
@@ -99,18 +99,18 @@ static db_node_ops_t _db_root_ops = {
     .get_str_value_fn = NULL
 };
 
-void db_get_root(db_node* node) {
+void db_get_root(db_node_t* node) {
     assert(node);
     node->ops = &_db_root_ops;
     memset(node->private_data.u8, 0, DB_NODE_PRIVATE_DATA_MAX);
 }
 
-int db_find_node_by_path(const char *path, db_node *node) {
+int db_find_node_by_path(const char *path, db_node_t *node) {
     assert(path);
     assert(node);
     /* find all the / in path and iterate over the folders */
     char name_buf[DB_NODE_NAME_MAX];
-    db_node child_node;
+    db_node_t child_node;
     const char *tok = path;
     while(*tok == '/') tok += 1;
     const char *path_end = &path[strlen(path)];
@@ -137,7 +137,7 @@ int db_find_node_by_path(const char *path, db_node *node) {
         }
         while(memcmp(tok, name_buf, len) != 0);
         /* folder found, now descent */
-        memcpy(node, &child_node, sizeof(db_node));
+        memcpy(node, &child_node, sizeof(db_node_t));
         tok = s_pos;
         while(*tok == '/') tok += 1;
         s_pos = strchr(tok, '/');

@@ -21,7 +21,7 @@
  * has a successor.
  *
  * "Files" (leaf nodes) as well as "folders" (inner nodes) are represented
- * by the db_node. Each db_node has a set of "file" operations defined
+ * by the db_node_t. Each db_node_t has a set of "file" operations defined
  * by the db_node_ops. Data types are represented by the db_node_type.
  *
  * "Folders" (inner nodes) never contain data. Each "file" contains exactly one
@@ -67,27 +67,27 @@ typedef struct {
         void* ptr;
         uint8_t u8[DB_NODE_PRIVATE_DATA_MAX];
     } private_data;
-} db_node;
+} db_node_t;
 
 struct db_node_ops {
-    char* (*get_name_fn) (const db_node *node, char name[DB_NODE_NAME_MAX]);
-    int (*get_next_child_fn) (db_node *node, db_node *next_child);
-    int (*get_next_fn) (db_node *node, db_node *next); //maybe not needed?
-    db_node_type_t (*get_type_fn) (const db_node *node);
-    size_t (*get_size_fn) (const db_node *node);
-    int32_t (*get_int_value_fn) (const db_node *node);
-    float (*get_float_value_fn) (const db_node *node);
-    size_t (*get_str_value_fn) (const db_node *node, char *value, size_t bufsize);
+    char* (*get_name_fn) (const db_node_t *node, char name[DB_NODE_NAME_MAX]);
+    int (*get_next_child_fn) (db_node_t *node, db_node_t *next_child);
+    int (*get_next_fn) (db_node_t *node, db_node_t *next); //maybe not needed?
+    db_node_type_t (*get_type_fn) (const db_node_t *node);
+    size_t (*get_size_fn) (const db_node_t *node);
+    int32_t (*get_int_value_fn) (const db_node_t *node);
+    float (*get_float_value_fn) (const db_node_t *node);
+    size_t (*get_str_value_fn) (const db_node_t *node, char *value, size_t bufsize);
 };
 
 /** Get a root node instance */
-void db_get_root(db_node* node);
+void db_get_root(db_node_t* node);
 /** Get a null node instance */
-void db_node_set_null(db_node* node);
+void db_node_set_null(db_node_t* node);
 /** Return 1 if node is a null node */
-int db_node_is_null(const db_node *node);
+int db_node_is_null(const db_node_t *node);
 /** Return a node by its path name, relative to the root. */
-int db_find_node_by_path(const char *path, db_node *node);
+int db_find_node_by_path(const char *path, db_node_t *node);
 
 #ifdef __cplusplus
 }

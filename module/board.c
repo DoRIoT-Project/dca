@@ -67,14 +67,14 @@ typedef struct {
     uint8_t is_root;
 } _db_board_node_private_data_t;
 
-char* _board_node_get_name (const db_node *node, char name[DB_NODE_NAME_MAX]);
-int _board_node_get_next_child (db_node *node, db_node *next_child);
-int _board_node_get_next (db_node *node, db_node *next);
-db_node_type_t _board_node_get_type (const db_node *node);
-size_t _board_node_get_size (const db_node *node);
-int32_t _board_node_get_int_value (const db_node *node);
-float _board_node_get_float_value (const db_node *node);
-size_t _board_node_get_str_value (const db_node *node, char *value, size_t bufsize);
+char* _board_node_get_name (const db_node_t *node, char name[DB_NODE_NAME_MAX]);
+int _board_node_get_next_child (db_node_t *node, db_node_t *next_child);
+int _board_node_get_next (db_node_t *node, db_node_t *next);
+db_node_type_t _board_node_get_type (const db_node_t *node);
+size_t _board_node_get_size (const db_node_t *node);
+int32_t _board_node_get_int_value (const db_node_t *node);
+float _board_node_get_float_value (const db_node_t *node);
+size_t _board_node_get_str_value (const db_node_t *node, char *value, size_t bufsize);
 
 static db_node_ops_t _db_board_node_ops = {
     .get_name_fn = _board_node_get_name,
@@ -87,7 +87,7 @@ static db_node_ops_t _db_board_node_ops = {
     .get_str_value_fn = _board_node_get_str_value
 };
 
-void db_new_board_node(db_node* node) {
+void db_new_board_node(db_node_t* node) {
     assert(node);
     node->ops = &_db_board_node_ops;
     memset(node->private_data.u8, 0, DB_NODE_PRIVATE_DATA_MAX);
@@ -97,7 +97,7 @@ void db_new_board_node(db_node* node) {
     private_data->is_root = 1;
 }
 
-char* _board_node_get_name (const db_node *node, char name[DB_NODE_NAME_MAX]) {
+char* _board_node_get_name (const db_node_t *node, char name[DB_NODE_NAME_MAX]) {
     assert(node);
     assert(name);
     _db_board_node_private_data_t *private_data =
@@ -112,7 +112,7 @@ char* _board_node_get_name (const db_node *node, char name[DB_NODE_NAME_MAX]) {
     return name;
 }
 
-int _board_node_get_next_child (db_node *node, db_node *next_child) {
+int _board_node_get_next_child (db_node_t *node, db_node_t *next_child) {
     assert(node);
     assert(next_child);
     _db_board_node_private_data_t *private_data =
@@ -137,7 +137,7 @@ int _board_node_get_next_child (db_node *node, db_node *next_child) {
     return 0;
 }
 
-int _board_node_get_next (db_node *node, db_node *next) {
+int _board_node_get_next (db_node_t *node, db_node_t *next) {
     assert(node);
     assert(next);
     _db_board_node_private_data_t *private_data =
@@ -164,7 +164,7 @@ int _board_node_get_next (db_node *node, db_node *next) {
     return 0;
 }
 
-db_node_type_t _board_node_get_type (const db_node *node) {
+db_node_type_t _board_node_get_type (const db_node_t *node) {
     assert(node);
     _db_board_node_private_data_t *private_data =
         (_db_board_node_private_data_t*) node->private_data.u8;
@@ -177,7 +177,7 @@ db_node_type_t _board_node_get_type (const db_node *node) {
     }
 }
 
-size_t _board_node_get_size (const db_node *node) {
+size_t _board_node_get_size (const db_node_t *node) {
     assert(node);
     _db_board_node_private_data_t *private_data =
         (_db_board_node_private_data_t*) node->private_data.u8;
@@ -201,7 +201,7 @@ size_t _board_node_get_size (const db_node *node) {
     return 0u;
 }
 
-int32_t _board_node_get_int_value (const db_node *node) {
+int32_t _board_node_get_int_value (const db_node_t *node) {
     assert(node);
     assert(node->ops->get_type_fn(node) == db_node_type_int);
     _db_board_node_private_data_t *private_data =
@@ -211,7 +211,7 @@ int32_t _board_node_get_int_value (const db_node *node) {
         _db_board_index[private_data->idx].get_value_fn)();
 }
 
-float _board_node_get_float_value (const db_node *node) {
+float _board_node_get_float_value (const db_node_t *node) {
     assert(node);
     assert(node->ops->get_type_fn(node) == db_node_type_float);
     _db_board_node_private_data_t *private_data =
@@ -221,7 +221,7 @@ float _board_node_get_float_value (const db_node *node) {
         _db_board_index[private_data->idx].get_value_fn)();
 }
 
-size_t _board_node_get_str_value (const db_node *node, char *value, size_t bufsize) {
+size_t _board_node_get_str_value (const db_node_t *node, char *value, size_t bufsize) {
     assert(node);
     assert(node->ops->get_type_fn(node) == db_node_type_str);
     _db_board_node_private_data_t *private_data =

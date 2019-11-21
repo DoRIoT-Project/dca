@@ -86,7 +86,7 @@ const vfs_file_system_t dcafs_file_system = {
  * @param[in]  node     node to query
  * @param[out] buf    output buffer
  */
-static void _dcafs_write_stat(const db_node *node, struct stat *restrict buf);
+static void _dcafs_write_stat(const db_node_t *node, struct stat *restrict buf);
 
 static int dcafs_mount(vfs_mount_t *mountp)
 {
@@ -114,7 +114,7 @@ static int dcafs_stat(vfs_mount_t *mountp, const char *restrict name, struct sta
         return -EFAULT;
     }
     int ret;
-    db_node node;
+    db_node_t node;
     ret = db_find_node_by_path(name, &node);
     if(ret < 0) {
         DEBUG("dcafs_stat: Not found :(\n");
@@ -164,14 +164,14 @@ static int dcafs_fstat(vfs_file_t *filp, struct stat *buf)
     if (buf == NULL) {
         return -EFAULT;
     }
-    db_node *node = (db_node*) filp->private_data.buffer;
+    db_node_t *node = (db_node_t*) filp->private_data.buffer;
     _dcafs_write_stat(node, buf);
     return 0;
 }
 
 static off_t dcafs_lseek(vfs_file_t *filp, off_t off, int whence)
 {
-    db_node *node = (db_node*) filp->private_data.buffer;
+    db_node_t *node = (db_node_t*) filp->private_data.buffer;
     switch (whence) {
         case SEEK_SET:
             break;
@@ -200,13 +200,13 @@ static int dcafs_open(vfs_file_t *filp, const char *name, int flags, mode_t mode
         return -EROFS;
     }
     int ret;
-    db_node node;
+    db_node_t node;
     ret = db_find_node_by_path(name, &node);
     if(ret < 0) {
         DEBUG("dcafs_open: Not found :(\n");
         return ret;
     }
-    memcpy(filp->private_data.buffer, &node, sizeof(db_node));
+    memcpy(filp->private_data.buffer, &node, sizeof(db_node_t));
     DEBUG("dcafs_open: Found :)\n");
     return 0;
 }
@@ -214,7 +214,7 @@ static int dcafs_open(vfs_file_t *filp, const char *name, int flags, mode_t mode
 static ssize_t dcafs_read(vfs_file_t *filp, void *dest, size_t nbytes)
 {
     DEBUG("dcafs_read: %p, %p, %lu\n", (void *)filp, dest, (unsigned long)nbytes);
-    db_node *node = (db_node*) filp->private_data.buffer;
+    db_node_t *node = (db_node_t*) filp->private_data.buffer;
     size_t size;
     /* TODO: get_str_value_fn should rather get a starting offset,
        so we do not need such a large buffer */
@@ -270,24 +270,24 @@ static int dcafs_opendir(vfs_DIR *dirp, const char *dirname, const char *abs_pat
     (void) abs_path;
     DEBUG("dcafs_opendir: %p, \"%s\", \"%s\"\n", (void *)dirp, dirname, abs_path);
     int ret;
-    db_node node;
+    db_node_t node;
     ret = db_find_node_by_path(dirname, &node);
     if(ret < 0) {
         DEBUG("dcafs_opendir: Not found :(\n");
         return ret;
     }
     DEBUG("dcafs_opendir: Found :)\n");
-    assert(sizeof(db_node) <= VFS_DIR_BUFFER_SIZE);
+    assert(sizeof(db_node_t) <= VFS_DIR_BUFFER_SIZE);
     memset(dirp->private_data.buffer, 0, VFS_DIR_BUFFER_SIZE);
-    memcpy(dirp->private_data.buffer, &node, sizeof(db_node));
+    memcpy(dirp->private_data.buffer, &node, sizeof(db_node_t));
     return 0;
 }
 
 static int dcafs_readdir(vfs_DIR *dirp, vfs_dirent_t *entry)
 {
     DEBUG("constfs_readdir: %p, %p\n", (void *)dirp, (void *)entry);
-    db_node *dir = (db_node*) dirp->private_data.buffer;
-    db_node node;
+    db_node_t *dir = (db_node_t*) dirp->private_data.buffer;
+    db_node_t node;
     dir->ops->get_next_child_fn(dir, &node);
     if (db_node_is_null(&node)) {
         return 0;
@@ -304,7 +304,7 @@ static int dcafs_closedir(vfs_DIR *dirp)
     return 0;
 }
 
-static void _dcafs_write_stat(const db_node *node, struct stat *restrict buf)
+static void _dcafs_write_stat(const db_node_t *node, struct stat *restrict buf)
 {
     assert(node && !db_node_is_null(node));
     memset(buf, 0, sizeof(*buf));

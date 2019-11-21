@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-void db_new_board_node(db_node* node);
+void db_new_board_node(db_node_t* node);
 
 #ifdef __cplusplus
 }
