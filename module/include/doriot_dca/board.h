@@ -23,10 +23,15 @@
 extern "C" {
 #endif
 
+/** Return board name */
 size_t board_get_name(char* strbuf, size_t bufsize);
+/** Return cpu name */
 size_t board_get_mcu(char* strbuf, size_t bufsize);
+/** Return RAM in kB */
 int32_t board_get_ram(void);
+/** Return mcu clock in kHz */
 int32_t board_get_clock(void);
+/** Return nonvolatile memory (flash) in kB */
 int32_t board_get_nonvolatile(void);
 
 #ifdef __cplusplus

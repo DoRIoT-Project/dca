@@ -25,26 +25,29 @@ static db_index_static_entry_t _board_static_entries[] =
 
 static db_index_static_entry_t _runtime_static_entries[] =
 {
-	{"cpu_load", db_node_type_int, (void (*)(void)) runtime_get_cpu_load},
-	{"num_processes", db_node_type_int, (void (*)(void)) runtime_get_num_processes},
+    {"cpu_load", db_node_type_int, (void (*)(void)) runtime_get_cpu_load},
+    {"num_processes", db_node_type_int, (void (*)(void)) runtime_get_num_processes},
+    {"text", db_node_type_int, (void (*)(void)) runtime_get_text},
+    {"data", db_node_type_int, (void (*)(void)) runtime_get_data},
+    {"heap", db_node_type_int, (void (*)(void)) runtime_get_heap},
 };
 
 db_index_entry_t db_index[] =
 {
-	{
-		.branch_name = "board",
-		.num_static_entries = ARRAY_SIZE(_board_static_entries),
-		.static_entries = _board_static_entries,
-		.num_dynamic_entries = 0,
-		.dynamic_entries = 0
-	},
-	{
-		.branch_name = "runtime",
-		.num_static_entries = ARRAY_SIZE(_runtime_static_entries),
-		.static_entries = _runtime_static_entries,
-		.num_dynamic_entries = 0,
-		.dynamic_entries = 0
-	},
+    {
+        .branch_name = "board",
+        .num_static_entries = ARRAY_SIZE(_board_static_entries),
+        .static_entries = _board_static_entries,
+        .num_dynamic_entries = 0,
+        .dynamic_entries = 0
+    },
+    {
+        .branch_name = "runtime",
+        .num_static_entries = ARRAY_SIZE(_runtime_static_entries),
+        .static_entries = _runtime_static_entries,
+        .num_dynamic_entries = 0,
+        .dynamic_entries = 0
+    },
 };
 
 size_t db_get_num_fl_nodes(void) {
