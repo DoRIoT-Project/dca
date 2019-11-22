@@ -9,7 +9,7 @@
  * @{
  *
  * @file
- * @brief
+ * @brief DCA "network" branch data retrieval functions
  *
  * @author  Frank Engelhardt <fengelha@ovgu.de>
  */
@@ -20,10 +20,7 @@
 extern "C" {
 #endif
 
-/**
- * @brief   A simple string message
- */
-extern char *external_module_message;
+
 
 #ifdef __cplusplus
 }

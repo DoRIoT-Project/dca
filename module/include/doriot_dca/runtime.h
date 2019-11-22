@@ -9,22 +9,25 @@
  * @{
  *
  * @file
- * @brief DCA main include file for external use
+ * @brief DCA "runtime" branch data retrieval functions
  *
  * @author  Frank Engelhardt <fengelha@ovgu.de>
  */
-#ifndef DORIOT_DCA_H
-#define DORIOT_DCA_H
+#ifndef DORIOT_DCA_RUNTIME_H
+#define DORIOT_DCA_RUNTIME_H
 
-#include <doriot_dca/fs.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+int32_t runtime_get_cpu_load(void);
+int32_t runtime_get_num_processes(void);
 
 #ifdef __cplusplus
 }
 #endif
 
 /** @} */
-#endif /* DORIOT_DCA_H */
+#endif

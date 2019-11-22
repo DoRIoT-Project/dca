@@ -9,7 +9,7 @@
  * @{
  *
  * @file
- * @brief DCA "board" tree representation
+ * @brief DCA "board" branch representation
  *
  * @author  Frank Engelhardt <fengelha@ovgu.de>
  */
@@ -17,12 +17,17 @@
 #define DORIOT_DCA_BOARD_H
 
 #include <doriot_dca/db.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void db_new_board_node(db_node_t* node);
+size_t board_get_name(char* strbuf, size_t bufsize);
+size_t board_get_mcu(char* strbuf, size_t bufsize);
+int32_t board_get_ram(void);
+int32_t board_get_clock(void);
+int32_t board_get_nonvolatile(void);
 
 #ifdef __cplusplus
 }

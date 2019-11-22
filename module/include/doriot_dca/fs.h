@@ -16,9 +16,6 @@
 #ifndef DORIOT_DCA_FS_H
 #define DORIOT_DCA_FS_H
 
-#include <stddef.h>
-#include <stdint.h>
-
 #include "vfs.h"
 
 /* vfs_DIR and vfs_file_t have to hold a db_node_t */
