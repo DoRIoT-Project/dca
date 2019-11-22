@@ -12,9 +12,6 @@
  * @brief    DCA database description
  *
  * @author  Frank Engelhardt <fengelha@ovgu.de>
- *
- *
- *
  */
 #ifndef DORIOT_DCA_DB_H
 #define DORIOT_DCA_DB_H
@@ -28,7 +25,7 @@ extern "C" {
 #endif
 
 /** This is the DCA database description */
-extern db_index_entry_t db_index[];
+extern db_fl_entry_t db_index[];
 
 /** Return the number of elements in db_index */
 size_t db_get_num_fl_nodes(void);

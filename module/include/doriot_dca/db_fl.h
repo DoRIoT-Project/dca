@@ -27,7 +27,7 @@ extern "C" {
 typedef struct {
     char name[DB_NODE_NAME_MAX];
     void (*get_value_fn)(void);
-} db_index_dynamic_entry_t;
+} db_fl_dynamic_entry_t;
 
 typedef struct {
     /** Entry (node) name */
@@ -36,7 +36,7 @@ typedef struct {
     db_node_type_t type;
     /** Entry (node) value function */
     void (*get_value_fn)(void);
-} db_index_static_entry_t;
+} db_fl_static_entry_t;
 
 typedef struct {
     /** Name of the top node of the branch. */
@@ -44,12 +44,12 @@ typedef struct {
     /** Number of elements in entries */
 	size_t num_static_entries;
     /** Array of static entries */
-    db_index_static_entry_t* static_entries;
+    db_fl_static_entry_t* static_entries;
     /** Number of elements in dynamic_entries */
 	size_t num_dynamic_entries;
     /** Array of dynamic entries */
-	db_index_dynamic_entry_t* dynamic_entries;
-} db_index_entry_t;
+	db_fl_dynamic_entry_t* dynamic_entries;
+} db_fl_entry_t;
 
 void db_new_fl_node(db_node_t *next_child, uint8_t fl_idx);
 

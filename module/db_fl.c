@@ -17,10 +17,10 @@
 #include <string.h>
 
 typedef struct {
-    /* if root node: index for enumerating the leaf nodes */
-    /* if not root node: index of current node */
+    /* if firstlevel branch root: index for enumerating the leaf nodes */
+    /* if not: index of current node */
     uint8_t sub_idx;
-    /* 1: root node, 0: leaf node */
+    /* 1: firstlevel branch root, 0: leaf node */
     uint8_t is_root;
     /* element in db_index[] */
     uint8_t fl_idx;
@@ -68,7 +68,7 @@ char* _fl_node_getname (const db_node_t *node, char name[DB_NODE_NAME_MAX]) {
     _db_fl_node_private_data_t *private_data =
         (_db_fl_node_private_data_t*) node->private_data.u8;
     assert(private_data->fl_idx < db_get_num_fl_nodes());
-    db_index_entry_t *fl_ent = &db_index[private_data->fl_idx];
+    db_fl_entry_t *fl_ent = &db_index[private_data->fl_idx];
     if(private_data->is_root) {
         strncpy(name, fl_ent->branch_name, DB_NODE_NAME_MAX);
     }
@@ -85,7 +85,7 @@ int _fl_node_getnext_child (db_node_t *node, db_node_t *next_child) {
     _db_fl_node_private_data_t *private_data =
         (_db_fl_node_private_data_t*) node->private_data.u8;
     assert(private_data->fl_idx < db_get_num_fl_nodes());
-    db_index_entry_t *fl_ent = &db_index[private_data->fl_idx];
+    db_fl_entry_t *fl_ent = &db_index[private_data->fl_idx];
     if(private_data->is_root) {
         /* return child node at sub_idx, advance sub_idx */
         if(private_data->sub_idx < fl_ent->num_static_entries) {
@@ -111,7 +111,7 @@ int _fl_node_getnext (db_node_t *node, db_node_t *next) {
     _db_fl_node_private_data_t *private_data =
         (_db_fl_node_private_data_t*) node->private_data.u8;
     assert(private_data->fl_idx < db_get_num_fl_nodes());
-    db_index_entry_t *fl_ent = &db_index[private_data->fl_idx];
+    db_fl_entry_t *fl_ent = &db_index[private_data->fl_idx];
     if(private_data->is_root) {
         /* retrieve the next firstlevel branch from db_index */
         if(private_data->fl_idx+1u < db_get_num_fl_nodes()) {
@@ -145,7 +145,7 @@ db_node_type_t _fl_node_gettype (const db_node_t *node) {
     }
     else {
         assert(private_data->fl_idx < db_get_num_fl_nodes());
-        db_index_entry_t *fl_ent = &db_index[private_data->fl_idx];
+        db_fl_entry_t *fl_ent = &db_index[private_data->fl_idx];
         assert(private_data->sub_idx < fl_ent->num_static_entries);
         return fl_ent->static_entries[private_data->sub_idx].type;
     }
@@ -160,7 +160,7 @@ size_t _fl_node_getsize (const db_node_t *node) {
     }
     else {
         assert(private_data->fl_idx < db_get_num_fl_nodes());
-        db_index_entry_t *fl_ent = &db_index[private_data->fl_idx];
+        db_fl_entry_t *fl_ent = &db_index[private_data->fl_idx];
         char buf[128]; // so the max length is always 128
         assert(private_data->sub_idx < fl_ent->num_static_entries);
         switch(fl_ent->static_entries[private_data->sub_idx].type) {
@@ -181,7 +181,7 @@ int32_t _fl_node_getint_value (const db_node_t *node) {
     _db_fl_node_private_data_t *private_data =
         (_db_fl_node_private_data_t*) node->private_data.u8;
     assert(private_data->fl_idx < db_get_num_fl_nodes());
-    db_index_entry_t *fl_ent = &db_index[private_data->fl_idx];
+    db_fl_entry_t *fl_ent = &db_index[private_data->fl_idx];
     assert(private_data->sub_idx < fl_ent->num_static_entries);
     return ( (int32_t (*)(void))
         fl_ent->static_entries[private_data->sub_idx].get_value_fn)();
@@ -191,7 +191,7 @@ float _fl_node_getfloat_value (const db_node_t *node) {
     _db_fl_node_private_data_t *private_data =
         (_db_fl_node_private_data_t*) node->private_data.u8;
     assert(private_data->fl_idx < db_get_num_fl_nodes());
-    db_index_entry_t *fl_ent = &db_index[private_data->fl_idx];
+    db_fl_entry_t *fl_ent = &db_index[private_data->fl_idx];
     assert(private_data->sub_idx < fl_ent->num_static_entries);
     return ( (float (*)(void))
         fl_ent->static_entries[private_data->sub_idx].get_value_fn)();
@@ -201,7 +201,7 @@ size_t _fl_node_getstr_value (const db_node_t *node, char *value, size_t bufsize
     _db_fl_node_private_data_t *private_data =
         (_db_fl_node_private_data_t*) node->private_data.u8;
     assert(private_data->fl_idx < db_get_num_fl_nodes());
-    db_index_entry_t *fl_ent = &db_index[private_data->fl_idx];
+    db_fl_entry_t *fl_ent = &db_index[private_data->fl_idx];
     assert(private_data->sub_idx < fl_ent->num_static_entries);
     return ( (size_t (*)(char*, size_t))
         fl_ent->static_entries[private_data->sub_idx].get_value_fn)(value, bufsize);

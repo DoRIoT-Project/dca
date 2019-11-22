@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <string.h>
 
-static db_index_static_entry_t _board_static_entries[] =
+static db_fl_static_entry_t _board_static_entries[] =
 {
     {"name", db_node_type_str, (void (*)(void)) board_get_name},
     {"mcu", db_node_type_str, (void (*)(void)) board_get_mcu},
@@ -23,7 +23,7 @@ static db_index_static_entry_t _board_static_entries[] =
     {"nonvolatile", db_node_type_int, (void (*)(void)) board_get_nonvolatile}
 };
 
-static db_index_static_entry_t _runtime_static_entries[] =
+static db_fl_static_entry_t _runtime_static_entries[] =
 {
     {"cpu_load", db_node_type_int, (void (*)(void)) runtime_get_cpu_load},
     {"num_processes", db_node_type_int, (void (*)(void)) runtime_get_num_processes},
@@ -32,7 +32,7 @@ static db_index_static_entry_t _runtime_static_entries[] =
     {"heap", db_node_type_int, (void (*)(void)) runtime_get_heap},
 };
 
-db_index_entry_t db_index[] =
+db_fl_entry_t db_index[] =
 {
     {
         .branch_name = "board",
