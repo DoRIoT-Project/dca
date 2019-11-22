@@ -28,11 +28,13 @@
 
 /* created from the constfs example */
 
+#if defined(USE_DCAFS)
 static vfs_mount_t dcafs_mount = {
     .fs = &dcafs_file_system,
     .mount_point = "/dca",
     .private_data = NULL,
 };
+#endif /* defined(USE_DCAFS) */
 
 
 static int _cat(int argc, char **argv)
@@ -170,6 +172,7 @@ static const shell_command_t shell_commands[] = {
 
 int main(void)
 {
+#if defined(USE_DCAFS)
     int res = vfs_mount(&dcafs_mount);
     if (res < 0) {
         puts("Error while mounting dcafs");
@@ -177,6 +180,7 @@ int main(void)
     else {
         puts("dcafs mounted successfully");
     }
+#endif /* defined(USE_DCAFS) */
 
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);

@@ -22,6 +22,8 @@ RIOTBASE ?= $(CURDIR)/../..
 
 EXTERNAL_MODULE_DIRS += $(CURDIR)/module
 
+USE_DCAFS = 1
+
 ifeq ($(BOARD), esp32-wroom-32)
 	USEMODULE += esp_wifi
 	USEMODULE += esp_hw_counter
@@ -35,9 +37,12 @@ USEMODULE += shell
 USEMODULE += shell_commands
 USEMODULE += od
 USEMODULE += fmt
-USEMODULE += doriot_dca
 USEMODULE += ps
 USEMODULE += vfs
+ifeq ($(USE_DCAFS), 1)
+	USEMODULE += doriot_dca
+	CFLAGS += -DUSE_DCAFS
+endif
 
 CFLAGS += -DVFS_DIR_BUFFER_SIZE=16 -DVFS_FILE_BUFFER_SIZE=16
 
