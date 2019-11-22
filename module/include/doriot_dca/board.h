@@ -9,7 +9,7 @@
  * @{
  *
  * @file
- * @brief DCA "board" branch representation
+ * @brief DCA "board" branch data retrieval functions
  *
  * @author  Frank Engelhardt <fengelha@ovgu.de>
  */

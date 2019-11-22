@@ -26,7 +26,7 @@
 
 #include <shell.h>
 
-/* from the constfs example */
+/* created from the constfs example */
 
 static vfs_mount_t dcafs_mount = {
     .fs = &dcafs_file_system,
@@ -34,63 +34,6 @@ static vfs_mount_t dcafs_mount = {
     .private_data = NULL,
 };
 
-/* Command handlers */
-static int _mount(int argc, char **argv)
-{
-    (void)argc;
-    (void)argv;
-#if defined(MTD_0) && (defined(MODULE_SPIFFS) || defined(MODULE_LITTLEFS))
-    int res = vfs_mount(&flash_mount);
-    if (res < 0) {
-        printf("Error while mounting %s...try format\n", FLASH_MOUNT_POINT);
-        return 1;
-    }
-
-    printf("%s successfully mounted\n", FLASH_MOUNT_POINT);
-    return 0;
-#else
-    puts("No external flash file system selected");
-    return 1;
-#endif
-}
-
-static int _format(int argc, char **argv)
-{
-    (void)argc;
-    (void)argv;
-#if defined(MTD_0) && (defined(MODULE_SPIFFS) || defined(MODULE_LITTLEFS))
-    int res = vfs_format(&flash_mount);
-    if (res < 0) {
-        printf("Error while formatting %s\n", FLASH_MOUNT_POINT);
-        return 1;
-    }
-
-    printf("%s successfully formatted\n", FLASH_MOUNT_POINT);
-    return 0;
-#else
-    puts("No external flash file system selected");
-    return 1;
-#endif
-}
-
-static int _umount(int argc, char **argv)
-{
-    (void)argc;
-    (void)argv;
-#if defined(MTD_0) && (defined(MODULE_SPIFFS) || defined(MODULE_LITTLEFS))
-    int res = vfs_umount(&flash_mount);
-    if (res < 0) {
-        printf("Error while unmounting %s\n", FLASH_MOUNT_POINT);
-        return 1;
-    }
-
-    printf("%s successfully unmounted\n", FLASH_MOUNT_POINT);
-    return 0;
-#else
-    puts("No external flash file system selected");
-    return 1;
-#endif
-}
 
 static int _cat(int argc, char **argv)
 {
@@ -219,43 +162,8 @@ static int _tree(int argc, char **argv)
     return _tree_r(0, print_contents, tree_path_buf, tree_filename);
 }
 
-static int _tee(int argc, char **argv)
-{
-    if (argc != 3) {
-        printf("Usage: %s <file> <str>\n", argv[0]);
-        return 1;
-    }
-
-#ifdef MODULE_NEWLIB
-    FILE *f = fopen(argv[1], "w+");
-    if (f == NULL) {
-        printf("error while trying to create %s\n", argv[1]);
-        return 1;
-    }
-    if (fwrite(argv[2], 1, strlen(argv[2]), f) != strlen(argv[2])) {
-        puts("Error while writing");
-    }
-    fclose(f);
-#else
-    int fd = open(argv[1], O_RDWR | O_CREAT);
-    if (fd < 0) {
-        printf("error while trying to create %s\n", argv[1]);
-        return 1;
-    }
-    if (write(fd, argv[2], strlen(argv[2])) != (ssize_t)strlen(argv[2])) {
-        puts("Error while writing");
-    }
-    close(fd);
-#endif
-    return 0;
-}
-
 static const shell_command_t shell_commands[] = {
-    { "mount", "mount flash filesystem", _mount },
-    { "format", "format flash file system", _format },
-    { "umount", "unmount flash filesystem", _umount },
     { "cat", "print the content of a file", _cat },
-    { "tee", "write a string in a file", _tee },
     { "tree", "print directory tree", _tree },
     { NULL, NULL, NULL }
 };
