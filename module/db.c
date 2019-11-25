@@ -9,6 +9,7 @@
 #include <doriot_dca/board.h>
 #include <doriot_dca/runtime.h>
 #include <doriot_dca/db_fl.h>
+#include <doriot_dca/ps.h>
 #include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -32,6 +33,11 @@ static db_fl_static_entry_t _runtime_static_entries[] =
     {"heap", db_node_type_int, (void (*)(void)) runtime_get_heap},
 };
 
+static db_fl_dynamic_entry_t _runtime_dynamic_entries[] =
+{
+    {"ps", db_new_ps_node}
+};
+
 db_fl_entry_t db_index[] =
 {
     {
@@ -45,8 +51,8 @@ db_fl_entry_t db_index[] =
         .branch_name = "runtime",
         .num_static_entries = ARRAY_SIZE(_runtime_static_entries),
         .static_entries = _runtime_static_entries,
-        .num_dynamic_entries = 0,
-        .dynamic_entries = 0
+        .num_dynamic_entries = 1,
+        .dynamic_entries = _runtime_dynamic_entries
     },
 };
 

@@ -94,8 +94,18 @@ int _fl_node_getnext_child (db_node_t *node, db_node_t *next_child) {
             private_data->sub_idx += 1;
         }
         else{
-            /* end of subnode list */
-            db_node_set_null(next_child);
+            uint8_t dyn_sub_idx =
+                private_data->sub_idx - fl_ent->num_static_entries;
+            if(dyn_sub_idx < fl_ent->num_dynamic_entries) {
+                db_fl_dynamic_entry_t *dyn_ent =
+                    &fl_ent->dynamic_entries[dyn_sub_idx];
+                private_data->sub_idx += 1;
+                dyn_ent->get_node_fn(next_child);
+            }
+            else {
+                /* end of subnode list */
+                db_node_set_null(next_child);
+            }
         }
     }
     else {
@@ -130,6 +140,7 @@ int _fl_node_getnext (db_node_t *node, db_node_t *next) {
         }
         else{
             /* end of node list */
+            /* TODO: return first dynamic entry */
             db_node_set_null(next);
         }
     }

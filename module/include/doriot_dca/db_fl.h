@@ -26,7 +26,7 @@ extern "C" {
 
 typedef struct {
     char name[DB_NODE_NAME_MAX];
-    void (*get_value_fn)(void);
+    void (*get_node_fn)(db_node_t *node);
 } db_fl_dynamic_entry_t;
 
 typedef struct {
