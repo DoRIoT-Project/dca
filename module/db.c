@@ -42,7 +42,7 @@ static db_fl_dynamic_entry_t _runtime_dynamic_entries[] =
 
 static db_fl_static_entry_t _network_static_entries[] =
 {
-    {"num_iaces", db_node_type_int, (void (*)(void)) network_get_num_ifaces},
+    {"num_ifaces", db_node_type_int, (void (*)(void)) network_get_num_ifaces},
 };
 
 static db_fl_dynamic_entry_t _network_dynamic_entries[] =
