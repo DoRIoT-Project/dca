@@ -16,11 +16,14 @@
 #ifndef DORIOT_DCA_NETWORK_H
 #define DORIOT_DCA_NETWORK_H
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
+/** Return number of network interfaces */
+int32_t network_get_num_ifaces(void);
 
 #ifdef __cplusplus
 }

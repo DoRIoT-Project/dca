@@ -8,8 +8,10 @@
 #include <doriot_dca/db.h>
 #include <doriot_dca/board.h>
 #include <doriot_dca/runtime.h>
+#include <doriot_dca/network.h>
 #include <doriot_dca/db_fl.h>
 #include <doriot_dca/ps.h>
+#include <doriot_dca/netif.h>
 #include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -38,6 +40,16 @@ static db_fl_dynamic_entry_t _runtime_dynamic_entries[] =
     {"ps", db_new_ps_node}
 };
 
+static db_fl_static_entry_t _network_static_entries[] =
+{
+    {"num_iaces", db_node_type_int, (void (*)(void)) network_get_num_ifaces},
+};
+
+static db_fl_dynamic_entry_t _network_dynamic_entries[] =
+{
+    {"netif", db_new_netif_node}
+};
+
 db_fl_entry_t db_index[] =
 {
     {
@@ -51,8 +63,15 @@ db_fl_entry_t db_index[] =
         .branch_name = "runtime",
         .num_static_entries = ARRAY_SIZE(_runtime_static_entries),
         .static_entries = _runtime_static_entries,
-        .num_dynamic_entries = 1,
+        .num_dynamic_entries = ARRAY_SIZE(_runtime_dynamic_entries),
         .dynamic_entries = _runtime_dynamic_entries
+    },
+    {
+        .branch_name = "network",
+        .num_static_entries = ARRAY_SIZE(_network_static_entries),
+        .static_entries = _network_static_entries,
+        .num_dynamic_entries = ARRAY_SIZE(_network_dynamic_entries),
+        .dynamic_entries = _network_dynamic_entries
     },
 };
 
