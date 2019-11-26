@@ -164,9 +164,18 @@ static int _tree(int argc, char **argv)
     return _tree_r(0, print_contents, tree_path_buf, tree_filename);
 }
 
+static int _hwinfo(int argc, char **argv)
+{
+    (void) argc;
+    (void) argv;
+    char* args[] = { "tree", "-p", "/dca", NULL };
+    return _tree(3, args);
+}
+
 static const shell_command_t shell_commands[] = {
     { "cat", "print the content of a file", _cat },
     { "tree", "print directory tree", _tree },
+    { "hwinfo", "get hardware info", _hwinfo },
     { NULL, NULL, NULL }
 };
 
