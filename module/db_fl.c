@@ -58,6 +58,7 @@ void _fl_node_init(db_node_t *node, uint8_t fl_idx, uint8_t sub_idx, uint8_t is_
 }
 
 void db_new_fl_node(db_node_t *node, uint8_t fl_idx) {
+    assert(sizeof(_db_fl_node_private_data_t) <= DB_NODE_PRIVATE_DATA_MAX);
     assert(node);
     _fl_node_init(node, fl_idx, 0u, 1u);
 }

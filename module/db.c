@@ -131,6 +131,7 @@ static db_node_ops_t _db_root_ops = {
 
 void db_get_root(db_node_t* node) {
     assert(node);
+    assert(1 <= DB_NODE_PRIVATE_DATA_MAX);
     node->ops = &_db_root_ops;
     /* node->private_data.u8 is the current element in db_index[] */
     memset(node->private_data.u8, 0, DB_NODE_PRIVATE_DATA_MAX);

@@ -67,6 +67,7 @@ kernel_pid_t _get_next_pid(kernel_pid_t pid) {
 
 void db_new_ps_node(db_node_t *node) {
     assert(node);
+    assert(sizeof(_db_ps_node_private_data_t) <= DB_NODE_PRIVATE_DATA_MAX);
     _ps_node_init(node, KERNEL_PID_FIRST, 1u);
 }
 

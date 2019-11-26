@@ -50,6 +50,7 @@ void _netif_node_init(db_node_t *node, gnrc_netif_t* iface, uint8_t is_root) {
 
 void db_new_netif_node(db_node_t *node) {
     assert(node);
+    assert(sizeof(_db_netif_node_private_data_t) <= DB_NODE_PRIVATE_DATA_MAX);
     /* may be NULL for root */
     gnrc_netif_t *iface = gnrc_netif_iter(NULL);
     _netif_node_init(node, iface, 1u);
