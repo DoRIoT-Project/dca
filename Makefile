@@ -3,7 +3,7 @@ INCLUDES += -I$(APPDIR)
 APPLICATION = doriot_dca_test
 
 BOARD ?= esp32-wroom-32
-BOARD_WHITELIST = esp32-wroom-32 native
+BOARD_WHITELIST = esp32-wroom-32 native nucleo-f767zi
 
 # Blacklisting msp430-based boards, as file syscalls are not supported
 BOARD_BLACKLIST :=  chronos \

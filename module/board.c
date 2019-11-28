@@ -22,7 +22,7 @@ size_t board_get_mcu(char* strbuf, size_t bufsize) {
     return strlen(strbuf);
 }
 
-int board_get_ram(void) {
+int32_t board_get_ram(void) {
     #ifdef BOARD_esp32_wroom_32
     return 2*160;
     #else
@@ -30,7 +30,7 @@ int board_get_ram(void) {
     #endif
 }
 
-int board_get_clock(void) {
+int32_t board_get_clock(void) {
     #ifdef BOARD_esp32_wroom_32
     return 16*1024;
     #else
@@ -38,7 +38,7 @@ int board_get_clock(void) {
     #endif
 }
 
-int board_get_nonvolatile(void) {
+int32_t board_get_nonvolatile(void) {
     #ifdef BOARD_esp32_wroom_32
     return 2*1024;
     #else

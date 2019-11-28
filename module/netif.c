@@ -13,6 +13,10 @@
 #include <string.h>
 #include <fmt.h>
 
+#if POSIX_C_SOURCE < 200809L
+    #define strnlen(a,b) strlen(a)
+#endif
+
 typedef struct {
     /* The iface that the node represents */
     gnrc_netif_t *iface;

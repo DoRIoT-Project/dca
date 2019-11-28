@@ -26,6 +26,10 @@
 
 #include <shell.h>
 
+#if POSIX_C_SOURCE < 200809L
+    #define strnlen(a,b) strlen(a)
+#endif
+
 /* created from the constfs example */
 
 #if defined(USE_DCAFS)
