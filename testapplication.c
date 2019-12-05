@@ -23,12 +23,16 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <assert.h>
+#include <stdio_base.h>
 
 #include <shell.h>
 
 #if POSIX_C_SOURCE < 200809L
     #define strnlen(a,b) strlen(a)
 #endif
+
+#define ENABLE_DEBUG (1)
+#include <debug.h>
 
 /* created from the constfs example */
 
@@ -77,19 +81,27 @@ static int _cat(int argc, char **argv)
     return 0;
 }
 
+void _puts(const char* str) {
+    stdio_write(str, strlen(str));
+}
+
 #define TREE_MAX_PATH_LEN 256
 #define TREE_MAX_FILENAME_LEN 16
 
 static int _tree_r(int8_t depth, uint8_t print_contents, char* tree_path_buf, char* tree_filename) {
-    for (int i=0; i<depth; i++) printf("  ");
-    printf("- %s", tree_filename);
+    /*DEBUG("_tree_r(): %p\n", &depth);*/
+    for (int i=0; i<depth; i++) _puts("  ");
+    _puts("- ");
+    _puts(tree_filename);
     char* p = tree_path_buf + strnlen(tree_path_buf, TREE_MAX_PATH_LEN);
     strncat(tree_path_buf, "/", TREE_MAX_PATH_LEN);
     strncat(tree_path_buf, tree_filename, TREE_MAX_PATH_LEN);
     struct stat statbuf;
     int r = stat(tree_path_buf, &statbuf);
     if (r < 0) {
-        printf("tree: stat on path %s failed\n", tree_path_buf);
+        _puts("tree: stat on path ");
+        _puts(tree_path_buf);
+        _puts(" failed\n");
         return r;
     }
     if(!(statbuf.st_mode & S_IFDIR)) {
@@ -97,13 +109,16 @@ static int _tree_r(int8_t depth, uint8_t print_contents, char* tree_path_buf, ch
         if(print_contents) {
             int fd = open(tree_path_buf, O_RDONLY);
             if (fd < 0) {
-                printf("file %s cannot be opened\n", tree_path_buf);
+                _puts("file ");
+                _puts(tree_path_buf);
+                _puts(" cannot be opened\n");
                 return 1;
             }
             char str[33];
             memset(str, 0, 33);
             if (read(fd, str, 32) != 0) {
-                printf(": %s", str);
+                _puts(": ");
+                _puts(str);
             }
             close(fd);
         }
@@ -116,7 +131,9 @@ static int _tree_r(int8_t depth, uint8_t print_contents, char* tree_path_buf, ch
         vfs_DIR dir;
         r = vfs_opendir(&dir, tree_path_buf);
         if (r < 0) {
-            printf("tree: Error opening dir %s\n", tree_path_buf);
+            _puts("tree: Error opening dir ");
+            _puts(tree_path_buf);
+            putchar('\n');
             return r;
         }
         vfs_dirent_t entry;
@@ -129,7 +146,9 @@ static int _tree_r(int8_t depth, uint8_t print_contents, char* tree_path_buf, ch
             }
         }
         if (r < 0) {
-            printf("tree: Error reading dir %s\n", tree_path_buf);
+            _puts("tree: Error reading dir ");
+            _puts(tree_path_buf);
+            putchar('\n');
             return r;
         }
         vfs_closedir(&dir);

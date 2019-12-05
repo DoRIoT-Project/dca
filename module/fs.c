@@ -217,7 +217,7 @@ static ssize_t dcafs_read(vfs_file_t *filp, void *dest, size_t nbytes)
     case db_node_type_int:
         {
             int32_t val = db_node_get_int_value(node);
-            size = fmt_s64_dec(data, val);
+            size = fmt_s32_dec(data, val);
         }
         break;
     case db_node_type_float:

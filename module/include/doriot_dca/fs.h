@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 /** Maximum size of a file */
-#define DCAFS_MAX_STR_LEN 256
+#define DCAFS_MAX_STR_LEN 128
 /** Number of digits after decimal point for float values */
 #define DCAFS_FLOAT_PRECISION 7
 
