@@ -4,6 +4,8 @@
 
 /**
   * @author  Frank Engelhardt <fengelha@ovgu.de>
+  * @author  Divya Sasidharan <divya.sasidharan@st.ovgu.de>
+  * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
   */
 
 #include <doriot_dca/ps.h>
@@ -30,7 +32,8 @@ static const char *field_names[COUNT] = {
     [STATE] = "state",
     [PRIORITY] = "priority",
     [STACK] = "total stack",
-    [STACK_USED] = "stack used"};
+    [STACK_USED] = "stack used"
+};
 
 #define FIELD_NAME_UNKNOWN "unknown"
 
@@ -95,7 +98,6 @@ void _ps_node_init(db_node_t *node, kernel_pid_t pid, uint8_t is_root)
 
 kernel_pid_t _get_next_pid(kernel_pid_t pid)
 {
-
     assert(pid >= KERNEL_PID_FIRST);
     assert(pid <= KERNEL_PID_LAST + 1);
     thread_t *p;
@@ -113,7 +115,6 @@ kernel_pid_t _get_next_pid(kernel_pid_t pid)
 
 void db_new_ps_node(db_node_t *node)
 {
-
     assert(node);
     assert(sizeof(_db_ps_node_private_data_t) <= DB_NODE_PRIVATE_DATA_MAX);
     _ps_node_init(node, KERNEL_PID_FIRST, 2u);
@@ -123,17 +124,14 @@ char *_ps_node_getname(const db_node_t *node, char name[DB_NODE_NAME_MAX])
 {
     assert(node);
     assert(name);
-
     _db_ps_node_private_data_t *private_data =
         (_db_ps_node_private_data_t *)node->private_data.u8;
     if (private_data->is_root == 2u)
     {
-
         strncpy(name, "ps", DB_NODE_NAME_MAX);
     }
     else if (private_data->is_root == 1u)
     {
-
         assert(private_data->pid <= KERNEL_PID_LAST);
         thread_t *p = (thread_t *)sched_threads[private_data->pid];
         assert(p != NULL);
@@ -143,11 +141,9 @@ char *_ps_node_getname(const db_node_t *node, char name[DB_NODE_NAME_MAX])
 
     else if (private_data->is_root == 0u && _field_count < COUNT)
     {
-
         strncpy(name, _ps_node_get_field_name(node, name), DB_NODE_NAME_MAX);
         DEBUG("field name:%s\n", name);
     }
-
     return name;
 }
 
@@ -161,7 +157,6 @@ int _ps_node_getnext_child(db_node_t *node, db_node_t *next_child)
 
     if (private_data->is_root == 2u)
     {
-
         if (private_data->pid <= KERNEL_PID_LAST)
         {
             _ps_node_init(next_child, private_data->pid, 1u);
@@ -176,12 +171,10 @@ int _ps_node_getnext_child(db_node_t *node, db_node_t *next_child)
 
     else if (private_data->is_root == 1u)
     {
-
         /* return child node representing next pid, advance own pid */
         if (private_data->pid <= KERNEL_PID_LAST && _field_count < COUNT)
         {
-
-            DEBUG("current pid :%d\n",private_data->pid);
+            DEBUG("current pid :%d\n", private_data->pid);
             _ps_node_init(next_child, private_data->pid, 0u);
             private_data->pid = _get_next_pid(private_data->pid);
             private_data->is_root = 0u;
@@ -190,14 +183,12 @@ int _ps_node_getnext_child(db_node_t *node, db_node_t *next_child)
 
     else
     {
-
         if (_field_count == COUNT - 1)
         {
             /* end of processes list */
             _field_count = 0;
             db_node_set_null(next_child);
         }
-
         else
         {
             _field_count++;
@@ -227,7 +218,6 @@ int _ps_node_getnext(db_node_t *node, db_node_t *next)
         }
         else
         {
-
             /* end of processes list */
             db_node_set_null(next);
         }
@@ -255,43 +245,45 @@ db_node_type_t _ps_node_gettype(const db_node_t *node)
     assert(node);
     _db_ps_node_private_data_t *private_data =
         (_db_ps_node_private_data_t *)node->private_data.u8;
-    if (private_data->is_root == 2u)
+    if (private_data->is_root == 2u) /* root */
     {
         return db_node_type_inner;
     }
-    else if (private_data->is_root == 1u)
+    else if (private_data->is_root == 1u) /* subroot */
     {
 
         return db_node_type_inner;
     }
-    else if (_field_count == 0) /* for pid */
+    else /* for fields */
     {
-        return db_node_type_int;
-    }
-    else if (_field_count == 1) /* for STATE */
-    {
-        return db_node_type_str;
-    }
-    else if (_field_count == 2) /* for PRIORITY */
-    {
-        return db_node_type_int;
-    }
-
-    else if (_field_count == 3) /*for STACK */
-    {
-
-        return db_node_type_int;
-    }
-    else /*for STACK USED*/
-    {
-
-        return db_node_type_int;
-    }
+        switch (_field_count)
+        {
+        case 0:
+            /* for pid */
+            return db_node_type_int;
+            break;
+        case 1:
+            /* for STATE */
+            return db_node_type_str;
+            break;
+        case 2:
+            /* for PRIORITY */
+            return db_node_type_int;
+            break;
+        case 3:
+            /*for STACK */
+            return db_node_type_int;
+            break;
+        default: 
+            /*for STACK USED*/
+            return db_node_type_int;
+            break;
+        }
+    }    
 }
 
 size_t _ps_node_getsize(const db_node_t *node)
 {
-
     assert(node);
     _db_ps_node_private_data_t *private_data =
         (_db_ps_node_private_data_t *)node->private_data.u8;
@@ -305,7 +297,6 @@ size_t _ps_node_getsize(const db_node_t *node)
     }
     else
     {
-
         return sizeof(int32_t);
     }
     return 0u;
@@ -316,34 +307,41 @@ int32_t _ps_node_getint_value(const db_node_t *node)
     _db_ps_node_private_data_t *private_data =
         (_db_ps_node_private_data_t *)node->private_data.u8;
     assert(private_data->pid <= KERNEL_PID_LAST);
-    if (_field_count == 0)
+    switch (_field_count)
     {
+    case 0:
         return (int32_t)private_data->pid;
-    }
-    else if (_field_count == 2)
-    {
-        thread_t *p = (thread_t *)sched_threads[private_data->pid];
-        assert(p != NULL);
-        return p->priority;
-    }
-    else if (_field_count == 3)
-    {
-        thread_t *p = (thread_t *)sched_threads[private_data->pid];
-        assert(p != NULL);
-        return p->stack_size;
-    }
-    else if (_field_count == 4)
-    {
-        thread_t *p = (thread_t *)sched_threads[private_data->pid];
-        assert(p != NULL);
-        int stacksz = p->stack_size;
-        int stack_free = thread_measure_stack_free(p->stack_start);
-        stacksz -= stack_free;
-        return stacksz;
-    }
-    else
+        break; 
+    case 2:
+        {
+            thread_t *p = (thread_t *)sched_threads[private_data->pid];
+            assert(p != NULL);
+            return p->priority;
+            break;
+        }
+    case 3:
+        {
+            thread_t *p = (thread_t *)sched_threads[private_data->pid];
+            assert(p != NULL);
+            return p->stack_size;
+            break;  
+        }
+    case 4:
+        {
+            thread_t *p = (thread_t *)sched_threads[private_data->pid];
+            assert(p != NULL);
+            int stacksz = p->stack_size;
+            int stack_free = thread_measure_stack_free(p->stack_start);
+            stacksz -= stack_free;
+            return stacksz;
+            break;
+        }
+    default:
         return -1;
+        break;
+    }
 }
+
 size_t _ps_node_getstr_value(const db_node_t *node, char *value, size_t bufsize)
 {
     (void)bufsize;
@@ -359,45 +357,35 @@ size_t _ps_node_getstr_value(const db_node_t *node, char *value, size_t bufsize)
     {
         strncpy(value, state_names[p->status], DB_NODE_NAME_MAX);
     }
-
     return 88;
 }
 
 char *_ps_node_get_field_name(const db_node_t *node, char name[DB_NODE_NAME_MAX])
 {
-
     assert(node);
     assert(name);
-
     _db_ps_node_private_data_t *private_data =
         (_db_ps_node_private_data_t *)node->private_data.u8;
     assert(private_data->pid <= KERNEL_PID_LAST);
     switch (_field_count)
     {
     case 0:
-        assert(private_data->pid <= KERNEL_PID_LAST);
         strncpy(name, field_names[PID], DB_NODE_NAME_MAX);
         break;
     case 1:
-        assert(private_data->pid <= KERNEL_PID_LAST);
         strncpy(name, field_names[STATE], DB_NODE_NAME_MAX);
         break;
     case 2:
-        assert(private_data->pid <= KERNEL_PID_LAST);
         strncpy(name, field_names[PRIORITY], DB_NODE_NAME_MAX);
         break;
     case 3:
-        assert(private_data->pid <= KERNEL_PID_LAST);
         strncpy(name, field_names[STACK], DB_NODE_NAME_MAX);
         break;
     case 4:
-        assert(private_data->pid <= KERNEL_PID_LAST);
         strncpy(name, field_names[STACK_USED], DB_NODE_NAME_MAX);
         break;
-
     default:
         break;
     }
-
     return name;
 }
