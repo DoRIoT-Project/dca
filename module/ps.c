@@ -274,12 +274,12 @@ db_node_type_t _ps_node_gettype(const db_node_t *node)
             /*for STACK */
             return db_node_type_int;
             break;
-        default: 
+        default:
             /*for STACK USED*/
             return db_node_type_int;
             break;
         }
-    }    
+    }
 }
 
 size_t _ps_node_getsize(const db_node_t *node)
@@ -311,7 +311,7 @@ int32_t _ps_node_getint_value(const db_node_t *node)
     {
     case 0:
         return (int32_t)private_data->pid;
-        break; 
+        break;
     case 2:
         {
             thread_t *p = (thread_t *)sched_threads[private_data->pid];
@@ -324,7 +324,7 @@ int32_t _ps_node_getint_value(const db_node_t *node)
             thread_t *p = (thread_t *)sched_threads[private_data->pid];
             assert(p != NULL);
             return p->stack_size;
-            break;  
+            break;
         }
     case 4:
         {
