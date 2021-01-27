@@ -3,7 +3,7 @@ INCLUDES += -I$(APPDIR)
 APPLICATION = doriot_dca_test
 
 BOARD ?= esp32-wroom-32
-BOARD_WHITELIST = esp32-wroom-32 native nucleo-f767zi
+BOARD_WHITELIST = esp32-wroom-32 native nucleo-f767zi msbiot nucleo-f429zi
 
 # Blacklisting msp430-based boards, as file syscalls are not supported
 BOARD_BLACKLIST :=  chronos \
@@ -39,12 +39,17 @@ USEMODULE += od
 USEMODULE += fmt
 USEMODULE += ps
 USEMODULE += vfs
+USEMODULE += schedstatistics
+USEMODULE += auto_init
+USEMODULE += core_idle_thread
+
 ifeq ($(USE_DCAFS), 1)
 	USEMODULE += doriot_dca
 	CFLAGS += -DUSE_DCAFS
 endif
 
 CFLAGS += -DVFS_DIR_BUFFER_SIZE=16 -DVFS_FILE_BUFFER_SIZE=16
+CFLAGS += -DDEBUG_ASSERT_VERBOSE
 
 DEVELHELP ?= 1
 

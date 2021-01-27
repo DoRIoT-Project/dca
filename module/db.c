@@ -4,6 +4,8 @@
 
  /**
   * @author  Frank Engelhardt <fengelha@ovgu.de>
+  * @author  Divya Sasidharan <divya.sasidharan@st.ovgu.de>
+  * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
   */
 #include <doriot_dca/db.h>
 #include <doriot_dca/board.h>
@@ -29,9 +31,9 @@ static db_fl_static_entry_t _board_static_entries[] =
 static db_fl_static_entry_t _runtime_static_entries[] =
 {
     {"cpu_load", db_node_type_int, (void (*)(void)) runtime_get_cpu_load},
+    {"cpu_util", db_node_type_float, (void (*)(void)) runtime_get_cpu_util},
     {"num_processes", db_node_type_int, (void (*)(void)) runtime_get_num_processes},
-    {"text", db_node_type_int, (void (*)(void)) runtime_get_text},
-    {"data", db_node_type_int, (void (*)(void)) runtime_get_data},
+    {"stack_used", db_node_type_int, (void (*)(void)) runtime_get_stack_used},
     {"heap", db_node_type_int, (void (*)(void)) runtime_get_heap},
 };
 
