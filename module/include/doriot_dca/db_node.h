@@ -42,7 +42,7 @@
 extern "C" {
 #endif
 
-#define DB_NODE_NAME_MAX 16
+#define DB_NODE_NAME_MAX 30
 #define DB_NODE_PRIVATE_DATA_MAX 8
 
 typedef enum {
