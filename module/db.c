@@ -11,9 +11,11 @@
 #include <doriot_dca/board.h>
 #include <doriot_dca/runtime.h>
 #include <doriot_dca/network.h>
+#include <doriot_dca/saul_node.h>
 #include <doriot_dca/db_fl.h>
 #include <doriot_dca/ps.h>
 #include <doriot_dca/netif.h>
+#include <doriot_dca/saul_devices.h>
 #include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -42,6 +44,12 @@ static db_fl_dynamic_entry_t _runtime_dynamic_entries[] =
     {"ps", db_new_ps_node}
 };
 
+static db_fl_static_entry_t _saul_static_entries[] =
+{
+    {"num_sensors", db_node_type_int, (void (*)(void)) saul_get_num_sensors},
+    {"num_actuators", db_node_type_int, (void (*)(void)) saul_get_num_actuators},
+};
+
 static db_fl_static_entry_t _network_static_entries[] =
 {
     {"num_ifaces", db_node_type_int, (void (*)(void)) network_get_num_ifaces},
@@ -50,6 +58,11 @@ static db_fl_static_entry_t _network_static_entries[] =
 static db_fl_dynamic_entry_t _network_dynamic_entries[] =
 {
     {"netif", db_new_netif_node}
+};
+
+static db_fl_dynamic_entry_t _saul_dynamic_entries[] =
+{
+    {"devices", db_new_saul_node}
 };
 
 db_fl_entry_t db_index[] =
@@ -74,6 +87,13 @@ db_fl_entry_t db_index[] =
         .static_entries = _network_static_entries,
         .num_dynamic_entries = ARRAY_SIZE(_network_dynamic_entries),
         .dynamic_entries = _network_dynamic_entries
+    },
+    {
+        .branch_name = "saul",
+        .num_static_entries = ARRAY_SIZE(_saul_static_entries),
+        .static_entries = _saul_static_entries,
+        .num_dynamic_entries = ARRAY_SIZE(_saul_dynamic_entries),
+        .dynamic_entries = _saul_dynamic_entries
     },
 };
 

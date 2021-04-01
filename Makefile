@@ -47,6 +47,7 @@ USEMODULE += gnrc_ipv6_nib
 USEMODULE += auto_init_gnrc_ipv6_nib
 USEMODULE += gnrc_sock_udp
 USEMODULE += xtimer
+USEMODULE += saul_default
 
 ifeq ($(USE_DCAFS), 1)
 	USEMODULE += doriot_dca

@@ -24,6 +24,8 @@
 #include <stdio_base.h>
 #include <msg.h>
 #include <shell.h>
+#include "saul_reg.h"
+#include "saul.h"
 #include <doriot_dca/udp_throughput.h>
 #include <doriot_dca/latency.h>
 
@@ -196,12 +198,38 @@ static int _hwinfo(int argc, char **argv)
     return _tree(3, args);
 }
 
+static int mock_test_saul(int argc, char **argv)
+{
+    (void)argc;
+    (void)argv;
+    int res;
+    static const saul_driver_t s0_dri = {NULL, NULL, SAUL_ACT_SERVO};
+    static const saul_driver_t s1_dri = {NULL, NULL, SAUL_SENSE_TEMP};
+    static const saul_driver_t s2_dri = {NULL, NULL, SAUL_SENSE_LIGHT};
+    static const saul_driver_t s3_dri = {NULL, NULL, SAUL_ACT_LED_RGB};
+    static const saul_driver_t s4_dri = {NULL, NULL, SAUL_ACT_SWITCH};
+
+    static saul_reg_t s0 = {NULL, NULL, "act_1", &s0_dri};
+    static saul_reg_t s1 = {NULL, NULL, "sens_2", &s1_dri};
+    static saul_reg_t s2 = {NULL, NULL, "sens_3", &s2_dri};
+    static saul_reg_t s3 = {NULL, NULL, "act_4", &s3_dri};
+    static saul_reg_t s4 = {NULL, NULL, "act_5", &s4_dri};
+
+    res = saul_reg_add(&s0);
+    res = saul_reg_add(&s1);
+    res = saul_reg_add(&s2);
+    res = saul_reg_add(&s3);
+    res = saul_reg_add(&s4);
+    return res;
+}
+
 static const shell_command_t shell_commands[] = {
     { "cat", "print the content of a file", _cat },
     { "tree", "print directory tree", _tree },
     { "hwinfo", "get hardware info", _hwinfo },
     { "latency", "measure latency and packet loss to neighbors", network_latency },
     { "throughput", "measure throughput to neighbors", network_throughput },
+    { "mock_saul", "adding devices to saul registry for testing ", mock_test_saul },
     { NULL, NULL, NULL }
 };
 
