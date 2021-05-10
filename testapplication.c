@@ -100,7 +100,7 @@ static int _tree_r(int8_t depth, uint8_t print_contents, char* tree_path_buf, ch
     strncat(tree_path_buf, "/", TREE_MAX_PATH_LEN);
     strncat(tree_path_buf, tree_filename, TREE_MAX_PATH_LEN);
     struct stat statbuf;
-    int r = stat(tree_path_buf, &statbuf);
+    int r = vfs_stat(tree_path_buf, &statbuf);
     if (r < 0) {
         _puts("tree: stat on path ");
         _puts(tree_path_buf);
@@ -175,8 +175,9 @@ static int _tree(int argc, char **argv)
         p = argv[2];
     }
     struct stat statbuf;
-    int r = stat(p, &statbuf);
+    int r = vfs_stat(p, &statbuf);
     if(r < 0 || !(statbuf.st_mode & S_IFDIR)) {
+        perror("");
         printf("path %s does not exist or is not a directory\n", p);
         return r;
     }

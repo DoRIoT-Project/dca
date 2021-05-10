@@ -31,7 +31,7 @@ endif
 USEMODULE += gnrc_netdev_default
 USEMODULE += auto_init_gnrc_netif
 USEMODULE += gnrc_ipv6_default
-USEMODULE += posix_time
+# USEMODULE += posix_time
 USEMODULE += posix_inet
 USEMODULE += shell
 USEMODULE += shell_commands
