@@ -409,7 +409,7 @@ static int _finish(_ping_data_t *data)
                data->tmax / 2000, ((data->tmax) / 2) % 1000);
         node->latency = tavg;
     }
-    printf("%s/ \n\tlatency :%u.%03u ms\n\tpacket_loss:%lu%%\n", data->hostname,node->latency / 2000, (node->latency / 2) % 1000,tmp);
+    printf("%s/ \n\tlatency :%u.%03u ms\n\tpacket_loss:%lu%%\n", data->hostname,(uint16_t)(node->latency / 2000), (uint16_t)(node->latency / 2) % 1000,tmp);
     if (!linked_list_node_exists(&node->addr))
     {
         linked_list_update_latency(node);
