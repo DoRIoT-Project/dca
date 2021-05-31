@@ -1,0 +1,9 @@
+menu "DCA Test Application"
+
+config USE_DCAFS
+    bool "Use dcafs"
+    default y
+    help 
+        Enable vfs interface and mount dcafs
+
+endmenu # Application

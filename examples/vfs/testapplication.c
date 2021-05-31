@@ -236,7 +236,7 @@ int main(void)
     }
 #endif /* defined(USE_DCAFS) */
 
-    udp_server(1883);    
+    udp_server(1883);
     msg_init_queue(_main_msg_queue,MAIN_QUEUE_SIZE);
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);
