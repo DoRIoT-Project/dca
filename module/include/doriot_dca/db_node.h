@@ -56,15 +56,15 @@ typedef enum {
 typedef struct db_node_ops db_node_ops_t;
 
 /**
-* @brief A node in the hierarchical database
-*
-* @param ops The operations for this node.
-* @param private_data_ptr place to hold implementation-specific data
-*/
+ * @brief A node in the hierarchical database
+ *
+ * @param ops The operations for this node.
+ * @param private_data_ptr place to hold implementation-specific data
+ */
 typedef struct {
-    db_node_ops_t* ops;
+    db_node_ops_t *ops;
     union {
-        void* ptr;
+        void *ptr;
         uint8_t u8[DB_NODE_PRIVATE_DATA_MAX];
     } private_data;
 } db_node_t;
@@ -74,7 +74,7 @@ typedef struct {
  * They should not be called directly, but through their respective wrappers.
  */
 struct db_node_ops {
-    char* (*get_name_fn) (const db_node_t *node, char name[DB_NODE_NAME_MAX]);
+    char * (*get_name_fn) (const db_node_t *node, char name[DB_NODE_NAME_MAX]);
     int (*get_next_child_fn) (db_node_t *node, db_node_t *next_child);
     int (*get_next_fn) (db_node_t *node, db_node_t *next); //maybe not needed?
     db_node_type_t (*get_type_fn) (const db_node_t *node);
@@ -85,7 +85,7 @@ struct db_node_ops {
 };
 
 /** Get a null node instance */
-void db_node_set_null(db_node_t* node);
+void db_node_set_null(db_node_t *node);
 /** Return 1 if node is a null node */
 int db_node_is_null(const db_node_t *node);
 /** Copy node */
@@ -96,7 +96,7 @@ int db_find_node_by_path(const char *path, db_node_t *node);
 /* Ops wrappers */
 
 /** Get name of node */
-char* db_node_get_name(const db_node_t *node, char name[DB_NODE_NAME_MAX]);
+char *db_node_get_name(const db_node_t *node, char name[DB_NODE_NAME_MAX]);
 /** Iterate through children of node, terminating with a null node */
 int db_node_get_next_child(db_node_t *node, db_node_t *next_child);
 /** Get the neighbor of this node. TODO: Not implemented everywhere */
@@ -111,6 +111,11 @@ int32_t db_node_get_int_value(const db_node_t *node);
 float db_node_get_float_value(const db_node_t *node);
 /** Get value of node, if it has db_node_type_str */
 size_t db_node_get_str_value(const db_node_t *node, char *value, size_t bufsize);
+
+/* Helper functions */
+
+/** Convert the node value into a string */
+int db_node_value_to_str(const db_node_t *node, char *buf, size_t bufsize);
 
 #ifdef __cplusplus
 }

@@ -1,0 +1,13 @@
+menuconfig KCONFIG_DCA
+    bool "Configure Doriot Data Collection Agent"
+    default y
+    help
+        This will enable configuring Data Collection Agent
+
+if KCONFIG_DCA
+
+config DCA_SHELL
+    bool "Enable DCA shell commands"
+    default y
+
+endif # KCONFIG_DCA

@@ -17,6 +17,7 @@
  */
 #include <stdio.h>
 #include <doriot_dca.h>
+#include <doriot_dca/db_node.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -191,14 +192,6 @@ static int _tree(int argc, char **argv)
     return _tree_r(0, print_contents, tree_path_buf, tree_filename);
 }
 
-static int _hwinfo(int argc, char **argv)
-{
-    (void) argc;
-    (void) argv;
-    char* args[] = { "tree", "-p", "/dca", NULL };
-    return _tree(3, args);
-}
-
 static int mock_test_saul(int argc, char **argv)
 {
     (void)argc;
@@ -227,7 +220,6 @@ static int mock_test_saul(int argc, char **argv)
 static const shell_command_t shell_commands[] = {
     { "cat", "print the content of a file", _cat },
     { "tree", "print directory tree", _tree },
-    { "hwinfo", "get hardware info", _hwinfo },
     { "latency", "measure latency and packet loss to neighbors", network_latency },
     { "throughput", "measure throughput to neighbors", network_throughput },
     { "mock_saul", "adding devices to saul registry for testing ", mock_test_saul },
