@@ -220,8 +220,6 @@ static int mock_test_saul(int argc, char **argv)
 static const shell_command_t shell_commands[] = {
     { "cat", "print the content of a file", _cat },
     { "tree", "print directory tree", _tree },
-    { "latency", "measure latency and packet loss to neighbors", network_latency },
-    { "throughput", "measure throughput to neighbors", network_throughput },
     { "mock_saul", "adding devices to saul registry for testing ", mock_test_saul },
     { NULL, NULL, NULL }
 };

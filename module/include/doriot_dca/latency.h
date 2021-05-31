@@ -2,12 +2,12 @@
  * @file latency.h
  * @author  Divya Sasidharan <divya.sasidharan@st.ovgu.de>
  * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2020-12-13
- * 
+ *
  * @copyright Copyright (c) 2020
- * 
+ *
  */
 #ifndef DORIOT_DCA_LATENCY_H
 #define DORIOT_DCA_LATENCY_H
@@ -26,7 +26,7 @@ extern "C" {
 #define DEFAULT_TIMEOUT_USEC (1U * US_PER_SEC)
 
 /* gets network latency and packetloss for each neighbors*/
-int network_latency(int argc, char **argv);
+int network_latency(void);
 
 #ifdef __cplusplus
 }

@@ -22,7 +22,7 @@ extern "C" {
 /*thread for calculating udp throughput*/
 void *_udp_server_thread(void *args);
 /* gets network throughput for each neighbors*/
-int network_throughput(int argc, char **argv);
+int network_throughput(void);
 /*starts server thread on specified port (1883)*/
 int udp_server(int port);
 

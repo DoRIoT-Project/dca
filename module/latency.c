@@ -11,7 +11,7 @@
  * public domain. The state-handling and duplicate detection was inspired by the
  * ping version of [inetutils](://www.gnu.org/software/inetutils/), which was
  * published under GPLv3
- * 
+ *
  */
 #ifdef __STDC_ALLOC_LIB__
 #define __STDC_WANT_LIB_EXT2__ 1
@@ -36,14 +36,15 @@
 #include "utlist.h"
 #include "xtimer.h"
 #include "fmt.h"
+#include "xfa.h"
+#include "shell.h"
 #include "doriot_dca/latency.h"
 #include <doriot_dca/linked_list.h>
 
 #define ENABLE_DEBUG (0)
 #include <debug.h>
 
-typedef struct
-{
+typedef struct {
     gnrc_netreg_entry_t netreg;
     xtimer_t sched_timer;
     msg_t sched_msg;
@@ -70,16 +71,14 @@ static void _print_reply(_ping_data_t *data, gnrc_pktsnip_t *icmpv6,
 static void _handle_reply(_ping_data_t *data, gnrc_pktsnip_t *pkt);
 static int _finish(_ping_data_t *data);
 
-int network_latency(int argc, char **argv)
+int network_latency(void)
 {
-    (void)argc;
-    (void)argv;
     int res = 0;
     unsigned iface = 0;
     void *state = NULL;
     gnrc_ipv6_nib_nc_t nce;
-    while (gnrc_ipv6_nib_nc_iter(iface, &state, &nce))
-    {
+
+    while (gnrc_ipv6_nib_nc_iter(iface, &state, &nce)) {
         _ping_data_t data = {
             .netreg = GNRC_NETREG_ENTRY_INIT_PID(ICMPV6_ECHO_REP,
                                                  thread_getpid()),
@@ -92,18 +91,15 @@ int network_latency(int argc, char **argv)
             .pattern = DEFAULT_ID,
         };
 
-        if ((res = _configure(&nce.ipv6, &data)) != 0)
-        {
+        if ((res = _configure(&nce.ipv6, &data)) != 0) {
             return res;
         }
         gnrc_netreg_register(GNRC_NETTYPE_ICMPV6, &data.netreg);
         _pinger(&data);
-        do
-        {
+        do{
             msg_t msg;
             msg_receive(&msg);
-            switch (msg.type)
-            {
+            switch (msg.type) {
             case GNRC_NETAPI_MSG_TYPE_RCV:
             {
                 _handle_reply(&data, msg.content.ptr);
@@ -121,25 +117,22 @@ int network_latency(int argc, char **argv)
                 break;
             }
         } while (data.num_recv < data.count);
-    finish:
+finish:
         xtimer_remove(&data.sched_timer);
         res = _finish(&data);
         gnrc_netreg_unregister(GNRC_NETTYPE_ICMPV6, &data.netreg);
         for (unsigned i = 0;
              i < cib_avail((cib_t *)&thread_get_active()->msg_queue);
-             i++)
-        {
+             i++) {
             msg_t msg;
 
             /* remove all remaining messages (likely caused by duplicates) */
             if ((msg_try_receive(&msg) > 0) &&
                 (msg.type == GNRC_NETAPI_MSG_TYPE_RCV) &&
-                (((gnrc_pktsnip_t *)msg.content.ptr)->type == GNRC_NETTYPE_ICMPV6))
-            {
+                (((gnrc_pktsnip_t *)msg.content.ptr)->type == GNRC_NETTYPE_ICMPV6)) {
                 gnrc_pktbuf_release(msg.content.ptr);
             }
-            else
-            {
+            else {
                 /* requeue other packets */
                 msg_send(&msg, thread_getpid());
             }
@@ -152,6 +145,7 @@ int network_latency(int argc, char **argv)
 static bool _netif_get(gnrc_netif_t **current_netif)
 {
     gnrc_netif_t *netif = *current_netif;
+
     netif = gnrc_netif_iter(netif);
 
     *current_netif = netif;
@@ -162,27 +156,25 @@ static int _configure(ipv6_addr_t *neigh, _ping_data_t *data)
 {
     int res = 1;
     char addr_str[IPV6_ADDR_MAX_STR_LEN];
+
     ipv6_addr_to_str(addr_str, neigh, sizeof(addr_str));
     data->hostname = strndup(addr_str, IPV6_ADDR_MAX_STR_LEN);
     char *iface = ipv6_addr_split_iface(data->hostname);
-    if (iface)
-    {
+
+    if (iface) {
         data->netif = gnrc_netif_get_by_pid(atoi(iface));
         res = 0;
     }
     /* preliminary select the first interface */
-    else if (_netif_get(&data->netif))
-    {
+    else if (_netif_get(&data->netif)) {
         /* don't take it if there is more than one interface */
         data->netif = NULL;
         res = 1;
     }
-    if (ipv6_addr_from_str(&data->host, data->hostname) == NULL)
-    {
+    if (ipv6_addr_from_str(&data->host, data->hostname) == NULL) {
         res = 1;
     }
-    else
-    {
+    else {
         res = 0;
     }
     data->id ^= (xtimer_now_usec() & UINT16_MAX);
@@ -197,26 +189,22 @@ static void _pinger(_ping_data_t *data)
     uint8_t *databuf;
 
     /* schedule next event (next ping or finish) ASAP */
-    if ((data->num_sent + 1) < data->count)
-    {
+    if ((data->num_sent + 1) < data->count) {
         /* didn't send all pings yet - schedule next in data->interval */
         data->sched_msg.type = _SEND_NEXT_PING;
         timer = data->interval;
     }
-    else
-    {
+    else {
         /* Wait for the last ping to come back.
          * data->timeout: wait for a response in milliseconds.
          * Affects only timeout in absence of any responses,
          * otherwise ping waits for two max RTTs. */
         data->sched_msg.type = _PING_FINISH;
         timer = data->timeout;
-        if (data->num_recv)
-        {
+        if (data->num_recv) {
             /* approx. 2*tmax, in seconds (2 RTT) */
             timer = (data->tmax / (512UL * 1024UL)) * US_PER_SEC;
-            if (timer == 0)
-            {
+            if (timer == 0) {
                 timer = 1U * US_PER_SEC;
             }
         }
@@ -227,16 +215,14 @@ static void _pinger(_ping_data_t *data)
     pkt = gnrc_icmpv6_echo_build(ICMPV6_ECHO_REQ, data->id,
                                  (uint16_t)data->num_sent++,
                                  NULL, data->datalen);
-    if (pkt == NULL)
-    {
+    if (pkt == NULL) {
         puts("error: packet buffer full");
         return;
     }
     databuf = (uint8_t *)(pkt->data) + sizeof(icmpv6_echo_t);
     memset(databuf, data->pattern, data->datalen);
     tmp = gnrc_ipv6_hdr_build(pkt, NULL, &data->host);
-    if (tmp == NULL)
-    {
+    if (tmp == NULL) {
         puts("error: packet buffer full");
         goto error_exit;
     }
@@ -244,25 +230,21 @@ static void _pinger(_ping_data_t *data)
     ipv6 = pkt->data;
     /* if data->hoplimit is unset (i.e. 0) gnrc_ipv6 will select hop limit */
     ipv6->hl = data->hoplimit;
-    if (data->netif != NULL)
-    {
+    if (data->netif != NULL) {
         tmp = gnrc_netif_hdr_build(NULL, 0, NULL, 0);
-        if (tmp == NULL)
-        {
+        if (tmp == NULL) {
             puts("error: packet buffer full");
             goto error_exit;
         }
         gnrc_netif_hdr_set_netif(tmp->data, data->netif);
         LL_PREPEND(pkt, tmp);
     }
-    if (data->datalen >= sizeof(uint32_t))
-    {
+    if (data->datalen >= sizeof(uint32_t)) {
         *((uint32_t *)databuf) = xtimer_now_usec();
     }
     if (!gnrc_netapi_dispatch_send(GNRC_NETTYPE_IPV6,
                                    GNRC_NETREG_DEMUX_CTX_ALL,
-                                   pkt))
-    {
+                                   pkt)) {
         puts("error: unable to send ICMPv6 echo request");
         goto error_exit;
     }
@@ -280,70 +262,57 @@ static void _print_reply(_ping_data_t *data, gnrc_pktsnip_t *icmpv6,
     int16_t rssi = netif_hdr ? netif_hdr->rssi : 0;
 
     /* discard if too short*/
-    if (icmpv6->size < (data->datalen + sizeof(icmpv6_echo_t)))
-    {
+    if (icmpv6->size < (data->datalen + sizeof(icmpv6_echo_t))) {
         return;
     }
-    if (icmpv6_hdr->type == ICMPV6_ECHO_REP)
-    {
+    if (icmpv6_hdr->type == ICMPV6_ECHO_REP) {
         char from_str[IPV6_ADDR_MAX_STR_LEN];
         const char *dupmsg = " (DUP!)";
         uint32_t triptime = 0;
         uint16_t recv_seq;
         /* not our ping*/
-        if (byteorder_ntohs(icmpv6_hdr->id) != data->id)
-        {
+        if (byteorder_ntohs(icmpv6_hdr->id) != data->id) {
             return;
         }
         if (!ipv6_addr_is_multicast(&data->host) &&
-            !ipv6_addr_equal(from, &data->host))
-        {
+            !ipv6_addr_equal(from, &data->host)) {
             return;
         }
         recv_seq = byteorder_ntohs(icmpv6_hdr->seq);
         ipv6_addr_to_str(&from_str[0], from, sizeof(from_str));
-        if (data->datalen >= sizeof(uint32_t))
-        {
+        if (data->datalen >= sizeof(uint32_t)) {
             triptime = xtimer_now_usec() - *((uint32_t *)(icmpv6_hdr + 1));
             data->tsum += triptime;
-            if (triptime < data->tmin)
-            {
+            if (triptime < data->tmin) {
                 data->tmin = triptime;
             }
-            if (triptime > data->tmax)
-            {
+            if (triptime > data->tmax) {
                 data->tmax = triptime;
             }
         }
-        if (bf_isset(data->cktab, recv_seq % CKTAB_SIZE))
-        {
+        if (bf_isset(data->cktab, recv_seq % CKTAB_SIZE)) {
             data->num_rept++;
         }
-        else
-        {
+        else {
             bf_set(data->cktab, recv_seq % CKTAB_SIZE);
             data->num_recv++;
             dupmsg += 7;
         }
         if (gnrc_netif_highlander() || (if_pid == KERNEL_PID_UNDEF) ||
-            !ipv6_addr_is_link_local(from))
-        {
+            !ipv6_addr_is_link_local(from)) {
             DEBUG("%u bytes from %s: icmp_seq=%u ttl=%u",
                   (unsigned)icmpv6->size,
                   from_str, recv_seq, hoplimit);
         }
-        else
-        {
+        else {
             DEBUG("%u bytes from %s%%%u: icmp_seq=%u ttl=%u",
                   (unsigned)icmpv6->size,
                   from_str, if_pid, recv_seq, hoplimit);
         }
-        if (rssi)
-        {
+        if (rssi) {
             DEBUG(" rssi=%" PRId16 " dBm", rssi);
         }
-        if (data->datalen >= sizeof(uint32_t))
-        {
+        if (data->datalen >= sizeof(uint32_t)) {
             DEBUG(" time=%lu.%03lu ms", (long unsigned)triptime / 1000,
                   (long unsigned)triptime % 1000);
         }
@@ -356,11 +325,11 @@ static void _handle_reply(_ping_data_t *data, gnrc_pktsnip_t *pkt)
     gnrc_pktsnip_t *ipv6, *icmpv6, *netif;
     gnrc_netif_hdr_t *netif_hdr;
     ipv6_hdr_t *ipv6_hdr;
+
     netif = gnrc_pktsnip_search_type(pkt, GNRC_NETTYPE_NETIF);
     ipv6 = gnrc_pktsnip_search_type(pkt, GNRC_NETTYPE_IPV6);
     icmpv6 = gnrc_pktsnip_search_type(pkt, GNRC_NETTYPE_ICMPV6);
-    if ((ipv6 == NULL) || (icmpv6 == NULL))
-    {
+    if ((ipv6 == NULL) || (icmpv6 == NULL)) {
         puts("No IPv6 or ICMPv6 header found in reply");
         return;
     }
@@ -374,51 +343,70 @@ static int _finish(_ping_data_t *data)
     struct neighbor_entryl *node = malloc(sizeof(struct neighbor_entryl));
 
     unsigned long tmp, nrecv, ndup;
+
     tmp = data->num_sent;
     nrecv = data->num_recv;
     ndup = data->num_rept;
     DEBUG("\n--- %s statistics ---\n"
-           "%lu packets transmitted, "
-           "%lu packets received, ",
-           data->hostname, tmp, nrecv);
+          "%lu packets transmitted, "
+          "%lu packets received, ",
+          data->hostname, tmp, nrecv);
     node->addr = data->host;
     node->throughput = 0;
     node->latency = 0;
     node->packet_loss = 0;
     node->next = NULL;
-    if (ndup)
-    {
+    if (ndup) {
         DEBUG("%lu duplicates, ", ndup);
     }
-    if (tmp > 0)
-    {
+    if (tmp > 0) {
         tmp = ((tmp - nrecv) * 100) / tmp;
         node->packet_loss = tmp;
     }
-    if (data->tmin != UINT_MAX)
-    {
+    if (data->tmin != UINT_MAX) {
         unsigned tavg = data->tsum / (nrecv + ndup);
         DEBUG("round-trip min/avg/max = %u.%03u/%u.%03u/%u.%03u ms\n",
-               data->tmin / 1000, data->tmin % 1000,
-               tavg / 1000, tavg % 1000,
-               data->tmax / 1000, data->tmax % 1000);
+              data->tmin / 1000, data->tmin % 1000,
+              tavg / 1000, tavg % 1000,
+              data->tmax / 1000, data->tmax % 1000);
 
         DEBUG("latency min/avg/max = %u.%03u/%u.%03u/%u.%03u ms\n",
-               data->tmin / 2000, ((data->tmin) / 2) % 1000,
-               tavg / 2000, (tavg / 2) % 1000,
-               data->tmax / 2000, ((data->tmax) / 2) % 1000);
+              data->tmin / 2000, ((data->tmin) / 2) % 1000,
+              tavg / 2000, (tavg / 2) % 1000,
+              data->tmax / 2000, ((data->tmax) / 2) % 1000);
         node->latency = tavg;
     }
-    printf("%s/ \n\tlatency :%u.%03u ms\n\tpacket_loss:%lu%%\n", data->hostname,(uint16_t)(node->latency / 2000), (uint16_t)(node->latency / 2) % 1000,tmp);
-    if (!linked_list_node_exists(&node->addr))
-    {
+    printf("%s/ \n\tlatency :%u.%03u ms\n\tpacket_loss:%lu%%\n", data->hostname,
+           (uint16_t)(node->latency / 2000), (uint16_t)(node->latency / 2) % 1000, tmp);
+    if (!linked_list_node_exists(&node->addr)) {
         linked_list_update_latency(node);
     }
-    else
-    {
+    else {
         linked_list_insert_node(node);
     }
     xtimer_usleep(1000);
     /* if condition is true, exit with 1 -- 'failure' */
     return (nrecv == 0);
 }
+
+#ifdef CONFIG_DCA_SHELL
+
+int _latency(int argc, char **argv)
+{
+    (void)argc;
+    (void)argv;
+    return network_latency();
+}
+
+XFA_USE_CONST(shell_command_t *, shell_commands_xfa);
+
+shell_command_t _latency_cmd = { "dcalat", "Run DCA latency measurements", _latency };
+
+XFA_ADD_PTR(
+    shell_commands_xfa,
+    0,
+    sc_dcalat,
+    &_latency_cmd
+    );
+
+#endif /* defined(CONFIG_DCA_SHELL) */
