@@ -10,4 +10,8 @@ config DCA_SHELL
     bool "Enable DCA shell commands"
     default y
 
+config DCA_UDP_SERVER_PORT
+    int "UDP server port for throughput measurements"
+    default 1338
+
 endif # KCONFIG_DCA

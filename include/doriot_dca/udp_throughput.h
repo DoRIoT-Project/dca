@@ -19,8 +19,8 @@ extern "C" {
 /** gets network throughput for each neighbors */
 int db_measure_network_throughput(void);
 
-/** starts server thread on specified port (1883) */
-int db_start_udp_server(int port);
+/** starts server thread */
+int db_start_udp_server(void);
 
 #ifdef __cplusplus
 }

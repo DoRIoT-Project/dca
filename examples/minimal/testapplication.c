@@ -29,7 +29,7 @@ static const shell_command_t shell_commands[] = {
 
 int main(void)
 {
-    db_start_udp_server(1883);
+    db_start_udp_server();
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     char line_buf[SHELL_DEFAULT_BUFSIZE];
 

@@ -57,7 +57,8 @@ typedef struct {
 
 void *_udp_server_thread(void *args)
 {
-    sock_udp_ep_t server = { .port = *(int *)args, .family = AF_INET6 };
+    (void)args;
+    sock_udp_ep_t server = { .port = CONFIG_DCA_UDP_SERVER_PORT, .family = AF_INET6 };
 
     msg_init_queue(server_msg_queue, SERVER_MSG_QUEUE_SIZE);
     _udp_data *udp_packet = malloc(sizeof(_udp_data));
@@ -220,11 +221,11 @@ finish:
     return 0;
 }
 
-int db_start_udp_server(int port)
+int db_start_udp_server(void)
 {
     if ((server_running == false) &&
         thread_create(server_stack, sizeof(server_stack), THREAD_PRIORITY_MAIN - 2,
-                      THREAD_CREATE_STACKTEST, _udp_server_thread, &port,
+                      THREAD_CREATE_STACKTEST, _udp_server_thread, NULL,
                       "dca_udp_server") <= KERNEL_PID_UNDEF) {
         return -1;
     }
