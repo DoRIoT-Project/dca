@@ -16,22 +16,20 @@
  * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
  */
 #include <stdio.h>
-#include <doriot_dca.h>
-#include <doriot_dca/db_node.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <assert.h>
-#include <stdio_base.h>
-#include <msg.h>
-#include <shell.h>
+
+#include "stdio_base.h"
+#include "msg.h"
+#include "shell.h"
+#include "doriot_dca.h"
 #include "saul_reg.h"
 #include "saul.h"
-#include <doriot_dca/udp_throughput.h>
-#include <doriot_dca/latency.h>
 
 #define ENABLE_DEBUG (0)
-#include <debug.h>
+#include "debug.h"
 
 #if POSIX_C_SOURCE < 200809L
     #define strnlen(a,b) strlen(a)
@@ -236,7 +234,7 @@ int main(void)
     }
 #endif /* defined(USE_DCAFS) */
 
-    udp_server(1883);
+    db_start_udp_server(1883);
     msg_init_queue(_main_msg_queue,MAIN_QUEUE_SIZE);
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);

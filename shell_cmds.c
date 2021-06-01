@@ -6,8 +6,7 @@
  * @author  Frank Engelhardt <fengelha@ovgu.de>
  */
 
-#include <doriot_dca.h>
-#include <doriot_dca/db_node.h>
+#include "doriot_dca.h"
 
 #include <string.h>
 #include <assert.h>

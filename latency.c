@@ -19,14 +19,18 @@
 #define _POSIX_C_SOURCE 200809L
 #endif
 
+#include "doriot_dca/latency.h"
+#include "doriot_dca/linked_list.h"
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bitfield.h"
-#include "byteorder.h"
 #include <inttypes.h>
 #include <limits.h>
+
+#include "bitfield.h"
+#include "byteorder.h"
 #include "msg.h"
 #include "net/gnrc.h"
 #include "net/gnrc/icmpv6.h"
@@ -38,11 +42,9 @@
 #include "fmt.h"
 #include "xfa.h"
 #include "shell.h"
-#include "doriot_dca/latency.h"
-#include <doriot_dca/linked_list.h>
 
 #define ENABLE_DEBUG (0)
-#include <debug.h>
+#include "debug.h"
 
 typedef struct {
     gnrc_netreg_entry_t netreg;
@@ -71,7 +73,7 @@ static void _print_reply(_ping_data_t *data, gnrc_pktsnip_t *icmpv6,
 static void _handle_reply(_ping_data_t *data, gnrc_pktsnip_t *pkt);
 static int _finish(_ping_data_t *data);
 
-int network_latency(void)
+int db_measure_network_latency(void)
 {
     int res = 0;
     unsigned iface = 0;
@@ -395,7 +397,7 @@ int _latency(int argc, char **argv)
 {
     (void)argc;
     (void)argv;
-    return network_latency();
+    return db_measure_network_latency();
 }
 
 XFA_USE_CONST(shell_command_t *, shell_commands_xfa);

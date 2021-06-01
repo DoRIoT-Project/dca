@@ -18,7 +18,7 @@
 #ifndef DORIOT_DCA_SAUL_DEVICES_H
 #define DORIOT_DCA_SAUL_DEVICES_H
 
-#include <doriot_dca/db_node.h>
+#include "doriot_dca/db_node.h"
 
 #ifdef __cplusplus
 extern "C" {

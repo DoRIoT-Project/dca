@@ -5,11 +5,13 @@
 /**
  * @author  Frank Engelhardt <fengelha@ovgu.de>
  */
-#include <doriot_dca/db.h>
-#include <doriot_dca/board.h>
+#include "doriot_dca/db.h"
+#include "doriot_dca/board.h"
+
 #include <assert.h>
 #include <string.h>
 #include <errno.h>
+
 #include "fmt.h"
 
 #define ENABLE_DEBUG (0)

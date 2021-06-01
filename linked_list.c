@@ -7,7 +7,8 @@
   * @author  Divya Sasidharan <divya.sasidharan@st.ovgu.de>
   * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
   */
-#include <doriot_dca/linked_list.h>
+#include "doriot_dca/linked_list.h"
+
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 

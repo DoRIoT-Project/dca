@@ -25,8 +25,8 @@ extern "C" {
 #define DEFAULT_INTERVAL_USEC (1U * US_PER_SEC)
 #define DEFAULT_TIMEOUT_USEC (1U * US_PER_SEC)
 
-/* gets network latency and packetloss for each neighbors*/
-int network_latency(void);
+/** gets network latency and packetloss for each neighbors */
+int db_measure_network_latency(void);
 
 #ifdef __cplusplus
 }

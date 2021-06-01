@@ -16,15 +16,10 @@
 #ifndef DORIOT_DCA_H
 #define DORIOT_DCA_H
 
-#include <doriot_dca/fs.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifdef __cplusplus
-}
-#endif
+#include "doriot_dca/fs.h"
+#include "doriot_dca/db.h"
+#include "doriot_dca/db_node.h"
+#include "doriot_dca/udp_throughput.h"
 
 /** @} */
 #endif /* DORIOT_DCA_H */

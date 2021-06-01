@@ -17,7 +17,8 @@
 #ifndef DORIOT_DCA_DB_FL_H
 #define DORIOT_DCA_DB_FL_H
 
-#include <doriot_dca/db_node.h>
+#include "doriot_dca/db_node.h"
+
 #include <stdint.h>
 
 #ifdef __cplusplus

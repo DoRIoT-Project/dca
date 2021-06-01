@@ -8,7 +8,8 @@
   * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
   */
 
-#include <doriot_dca/saul_node.h>
+#include "doriot_dca/saul_node.h"
+
 #include "saul_reg.h"
 
 int32_t saul_get_num_sensors(void)

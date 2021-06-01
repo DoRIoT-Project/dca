@@ -6,7 +6,8 @@
  * @author  Frank Engelhardt <fengelha@ovgu.de>
  */
 
-#include <doriot_dca/board.h>
+#include "doriot_dca/board.h"
+
 #include <assert.h>
 #include <stdint.h>
 #include <stddef.h>

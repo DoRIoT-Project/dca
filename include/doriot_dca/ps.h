@@ -16,7 +16,7 @@
 #ifndef DORIOT_DCA_PS_H
 #define DORIOT_DCA_PS_H
 
-#include <doriot_dca/db_node.h>
+#include "doriot_dca/db_node.h"
 
 #ifdef __cplusplus
 extern "C" {

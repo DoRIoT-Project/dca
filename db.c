@@ -7,15 +7,16 @@
   * @author  Divya Sasidharan <divya.sasidharan@st.ovgu.de>
   * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
   */
-#include <doriot_dca/db.h>
-#include <doriot_dca/board.h>
-#include <doriot_dca/runtime.h>
-#include <doriot_dca/network.h>
-#include <doriot_dca/saul_node.h>
-#include <doriot_dca/db_fl.h>
-#include <doriot_dca/ps.h>
-#include <doriot_dca/netif.h>
-#include <doriot_dca/saul_devices.h>
+#include "doriot_dca/db.h"
+#include "doriot_dca/board.h"
+#include "doriot_dca/runtime.h"
+#include "doriot_dca/network.h"
+#include "doriot_dca/saul_node.h"
+#include "doriot_dca/db_fl.h"
+#include "doriot_dca/ps.h"
+#include "doriot_dca/netif.h"
+#include "doriot_dca/saul_devices.h"
+
 #include <assert.h>
 #include <stddef.h>
 #include <stdint.h>

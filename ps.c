@@ -8,12 +8,15 @@
   * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
   */
 
-#include <doriot_dca/ps.h>
+#include "doriot_dca/ps.h"
+
 #include <stddef.h>
 #include <stdint.h>
 #include <thread.h>
-#include <sched.h>
 #include <string.h>
+
+#include "sched.h"
+
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 

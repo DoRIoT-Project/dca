@@ -8,11 +8,13 @@
   * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
   */
 
-#include <doriot_dca/saul_devices.h>
+#include "doriot_dca/saul_devices.h"
+
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include <fmt.h>
+
+#include "fmt.h"
 #include "saul_reg.h"
 #include "saul.h"
 

@@ -16,7 +16,8 @@
 #ifndef DORIOT_DCA_BOARD_H
 #define DORIOT_DCA_BOARD_H
 
-#include <doriot_dca/db.h>
+#include "doriot_dca/db.h"
+
 #include <stdint.h>
 
 #ifdef __cplusplus

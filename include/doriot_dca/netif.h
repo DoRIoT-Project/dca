@@ -18,8 +18,8 @@
 #ifndef DORIOT_DCA_NETIF_H
 #define DORIOT_DCA_NETIF_H
 
-#include <doriot_dca/db_node.h>
-#include <doriot_dca/linked_list.h>
+#include "doriot_dca/db_node.h"
+#include "doriot_dca/linked_list.h"
 
 #ifdef __cplusplus
 extern "C" {

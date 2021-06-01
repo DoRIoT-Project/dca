@@ -1,6 +1,20 @@
+/*
+ * Copyright (C) 2021 Otto-von-Guericke-Universität Magdeburg
+ */
+
+/**
+  * @author  Frank Engelhardt <fengelha@ovgu.de>
+  * @author  Divya Sasidharan <divya.sasidharan@st.ovgu.de>
+  * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
+  */
+
+#include "doriot_dca/linked_list.h"
+#include "doriot_dca/udp_throughput.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+
 #include "net/sock/udp.h"
 #include "net/ipv6/addr.h"
 #include "thread.h"
@@ -9,11 +23,9 @@
 #include "shell.h"
 #include "net/gnrc/ipv6/nib.h"
 #include "net/gnrc/ipv6/nib/nc.h"
-#include <doriot_dca/linked_list.h>
-#include <doriot_dca/udp_throughput.h>
 
 #define ENABLE_DEBUG (0)
-#include <debug.h>
+#include "debug.h"
 
 #define SERVER_MSG_QUEUE_SIZE (8)
 #define SERVER_BUFFER_SIZE (64)
@@ -122,7 +134,7 @@ void *_udp_server_thread(void *args)
     }
 }
 
-int network_throughput(void)
+int db_measure_network_throughput(void)
 {
     int res;
     int i = 0;
@@ -208,12 +220,12 @@ finish:
     return 0;
 }
 
-int udp_server(int port)
+int db_start_udp_server(int port)
 {
     if ((server_running == false) &&
         thread_create(server_stack, sizeof(server_stack), THREAD_PRIORITY_MAIN - 2,
                       THREAD_CREATE_STACKTEST, _udp_server_thread, &port,
-                      "udp_server") <= KERNEL_PID_UNDEF) {
+                      "dca_udp_server") <= KERNEL_PID_UNDEF) {
         return -1;
     }
     return 0;
@@ -225,7 +237,7 @@ int _throughput(int argc, char **argv)
 {
     (void)argc;
     (void)argv;
-    return network_throughput();
+    return db_measure_network_throughput();
 }
 
 XFA_USE_CONST(shell_command_t *, shell_commands_xfa);

@@ -15,16 +15,19 @@
  * @author  Divya Sasidharan <divya.sasidharan@st.ovgu.de>
  * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
  */
-#include<string.h>
+#ifndef DORIOT_DCA_LINKED_LIST_H
+#define DORIOT_DCA_LINKED_LIST_H
+
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "net/gnrc/ipv6.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-struct neighbor_entryl;
 struct neighbor_entryl
 {
     ipv6_addr_t addr;
@@ -32,7 +35,7 @@ struct neighbor_entryl
     uint32_t packet_loss;
     uint32_t throughput;
     struct neighbor_entryl *next;
-} ;
+};
 
 /*checks if a neighbor exists*/
 uint8_t linked_list_node_exists( ipv6_addr_t *ip_cache);
@@ -50,3 +53,5 @@ uint8_t linked_list_read_ip(uint8_t num_neighbours,char addr_str[IPV6_ADDR_MAX_S
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* defined(DORIOT_DCA_LINKED_LIST_H) */

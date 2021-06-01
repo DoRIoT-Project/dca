@@ -9,8 +9,9 @@
  /* TODO: this representation is also kind of the static entry representation,
     which it shouldn't be. The dynamic entries are missing completely. */
 
-#include <doriot_dca/db.h>
-#include <doriot_dca/db_fl.h>
+#include "doriot_dca/db.h"
+#include "doriot_dca/db_fl.h"
+
 #include <assert.h>
 #include <stdint.h>
 #include <stddef.h>

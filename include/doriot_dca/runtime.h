@@ -19,11 +19,12 @@
 #define DORIOT_DCA_RUNTIME_H
 
 #include <stdint.h>
-#include <thread.h>
-#include <sched.h>
 #include <string.h>
-#include <schedstatistics.h>
 #include <math.h>
+
+#include "thread.h"
+#include "sched.h"
+#include "schedstatistics.h"
 
 #ifdef __cplusplus
 extern "C" {

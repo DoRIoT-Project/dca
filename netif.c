@@ -8,14 +8,17 @@
   * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
   */
 
-#include <doriot_dca/netif.h>
+#include "doriot_dca/netif.h"
+
 #include <stddef.h>
 #include <stdint.h>
 #include <net/gnrc/netif.h>
 #include <string.h>
-#include <fmt.h>
+
+#include "fmt.h"
 #include "net/gnrc/ipv6.h"
 #include "net/gnrc/ipv6/nib/nc.h"
+
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
