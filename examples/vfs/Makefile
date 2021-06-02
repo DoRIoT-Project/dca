@@ -1,6 +1,6 @@
 INCLUDES += -I$(APPDIR)
 
-APPLICATION = doriot_dca_vfs
+APPLICATION = dca_vfs_example
 
 BOARD ?= nucleo-f429zi
 BOARD_WHITELIST = esp32-wroom-32 native nucleo-f767zi msbiot nucleo-f429zi
@@ -18,11 +18,9 @@ BOARD_BLACKLIST :=  chronos \
 BOARD_INSUFFICIENT_MEMORY := arduino-duemilanove arduino-leonardo arduino-nano \
                              arduino-uno nucleo-f031k6
 
-RIOTBASE ?= $(CURDIR)/../../..
+RIOTBASE ?= $(CURDIR)/../../../..
 
 EXTERNAL_MODULE_DIRS += $(CURDIR)/../..
-
-USE_DCAFS = 1
 
 ifeq ($(BOARD), esp32-wroom-32)
 	USEMODULE += esp_wifi
@@ -33,6 +31,8 @@ USEMODULE += posix_inet
 USEMODULE += core_idle_thread
 USEMODULE += xtimer
 USEMODULE += vfs
+USEMODULE += gnrc_netdev_default
+USEMODULE += auto_init_gnrc_netif
 
 CFLAGS += -DCONFIG_GNRC_IPV6_NIB_ARSM=1
 CFLAGS += -DCONFIG_GNRC_IPV6_NIB_SLAAC=1
