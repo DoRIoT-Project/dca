@@ -8,8 +8,12 @@
   * @author  Adarsh Raghoothaman <adarsh.raghoothaman@st.ovgu.de>
   */
 
-#include <doriot_dca/network.h>
-#include <net/gnrc/netif.h>
+#include "doriot_dca/network.h"
+
+#include <unistd.h>
+#include <stddef.h>
+
+#include "net/netif.h"
 
 int32_t network_get_num_ifaces(void)
 {

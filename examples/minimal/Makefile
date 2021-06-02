@@ -25,14 +25,13 @@ EXTERNAL_MODULE_DIRS += $(CURDIR)/../..
 USE_DCAFS = 1
 
 ifeq ($(BOARD), esp32-wroom-32)
-	USEMODULE += esp_wifi
-	USEMODULE += esp_hw_counter
+    USEMODULE += esp_wifi
+    USEMODULE += esp_hw_counter
 endif
 USEMODULE += doriot_dca
 USEMODULE += posix_inet
 USEMODULE += core_idle_thread
 USEMODULE += xtimer
-#USEMODULE += vfs
 
 CFLAGS += -DCONFIG_GNRC_IPV6_NIB_ARSM=1
 CFLAGS += -DCONFIG_GNRC_IPV6_NIB_SLAAC=1
@@ -47,3 +46,5 @@ DEVELHELP ?= 1
 QUIET ?= 1
 
 include $(RIOTBASE)/Makefile.include
+
+$(info $(USEMODULE))

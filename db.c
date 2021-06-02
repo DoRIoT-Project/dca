@@ -42,15 +42,25 @@ static db_fl_static_entry_t _runtime_static_entries[] =
 
 static db_fl_dynamic_entry_t _runtime_dynamic_entries[] =
 {
+#if CONFIG_DCA_PS
     {"ps", db_new_ps_node}
+#endif /* CONFIG_DCA_PS */
 };
 
+#if CONFIG_DCA_SAUL
 static db_fl_static_entry_t _saul_static_entries[] =
 {
     {"num_sensors", db_node_type_int, (void (*)(void)) saul_get_num_sensors},
     {"num_actuators", db_node_type_int, (void (*)(void)) saul_get_num_actuators},
 };
 
+static db_fl_dynamic_entry_t _saul_dynamic_entries[] =
+{
+    {"devices", db_new_saul_node}
+};
+#endif /* CONFIG_DCA_SAUL */
+
+#if CONFIG_DCA_NETWORK
 static db_fl_static_entry_t _network_static_entries[] =
 {
     {"num_ifaces", db_node_type_int, (void (*)(void)) network_get_num_ifaces},
@@ -60,11 +70,7 @@ static db_fl_dynamic_entry_t _network_dynamic_entries[] =
 {
     {"netif", db_new_netif_node}
 };
-
-static db_fl_dynamic_entry_t _saul_dynamic_entries[] =
-{
-    {"devices", db_new_saul_node}
-};
+#endif /* CONFIG_DCA_NETWORK */
 
 db_fl_entry_t db_index[] =
 {
@@ -82,6 +88,7 @@ db_fl_entry_t db_index[] =
         .num_dynamic_entries = ARRAY_SIZE(_runtime_dynamic_entries),
         .dynamic_entries = _runtime_dynamic_entries
     },
+#if CONFIG_DCA_NETWORK
     {
         .branch_name = "network",
         .num_static_entries = ARRAY_SIZE(_network_static_entries),
@@ -89,6 +96,8 @@ db_fl_entry_t db_index[] =
         .num_dynamic_entries = ARRAY_SIZE(_network_dynamic_entries),
         .dynamic_entries = _network_dynamic_entries
     },
+#endif /* CONFIG_DCA_NETWORK */
+#if CONFIG_DCA_SAUL
     {
         .branch_name = "saul",
         .num_static_entries = ARRAY_SIZE(_saul_static_entries),
@@ -96,6 +105,7 @@ db_fl_entry_t db_index[] =
         .num_dynamic_entries = ARRAY_SIZE(_saul_dynamic_entries),
         .dynamic_entries = _saul_dynamic_entries
     },
+#endif /* CONFIG_DCA_SAUL */
 };
 
 size_t db_get_num_fl_nodes(void) {

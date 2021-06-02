@@ -29,7 +29,10 @@ static const shell_command_t shell_commands[] = {
 
 int main(void)
 {
+    /* required for network statistics */
+#ifdef CONFIG_DCA_NETWORK
     db_start_udp_server();
+#endif /* CONFIG_DCA_NETWORK */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     char line_buf[SHELL_DEFAULT_BUFSIZE];
 

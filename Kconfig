@@ -10,6 +10,18 @@ config DCA_SHELL
     bool "Enable DCA shell commands"
     default y
 
+config DCA_PS
+    bool "Enable /runtime/ps statistics"
+    default y
+
+config DCA_NETWORK
+    bool "Enable /network statistics"
+    default y
+
+config DCA_SAUL
+    bool "Enable /saul statistics"
+    default y
+
 config DCA_UDP_SERVER_PORT
     int "UDP server port for throughput measurements"
     default 1338
