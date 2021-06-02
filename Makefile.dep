@@ -12,4 +12,5 @@ ifneq (,$(filter doriot_dca,$(USEMODULE)))
 	USEMODULE += fmt
 	USEMODULE += xtimer
 	USEMODULE += saul_default
+	USEMODULE += gcoap
 endif

@@ -20,6 +20,7 @@
 #include "doriot_dca/db.h"
 #include "doriot_dca/db_node.h"
 #include "doriot_dca/udp_throughput.h"
+#include "doriot_dca/coap.h"
 
 /** @} */
 #endif /* DORIOT_DCA_H */
