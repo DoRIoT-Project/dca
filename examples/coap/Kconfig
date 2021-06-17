@@ -1,0 +1,13 @@
+menuconfig KCONFIG_APP
+    bool "Configure application"
+    default y
+    help
+        This will enable configuring the application
+
+if KCONFIG_APP
+
+config DCA_NETWORK
+    bool "Enable UDP throughput server"
+    default y
+
+endif # KCONFIG_DCA
