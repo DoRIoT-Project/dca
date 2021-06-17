@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
 
 #include "xfa.h"
 #include "shell.h"
