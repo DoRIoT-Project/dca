@@ -46,6 +46,15 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
+#if(POSIX_C_SOURCE < 200809L && _XOPEN_SOURCE < 700)
+char *strndup(const char *s, size_t n)
+{
+    char *ret = malloc(n);
+    strcpy(ret, s);
+    return ret;
+}
+#endif
+
 typedef struct {
     gnrc_netreg_entry_t netreg;
     xtimer_t sched_timer;
@@ -318,7 +327,9 @@ static void _print_reply(_ping_data_t *data, gnrc_pktsnip_t *icmpv6,
             DEBUG(" time=%lu.%03lu ms", (long unsigned)triptime / 1000,
                   (long unsigned)triptime % 1000);
         }
-        puts(dupmsg);
+        #if (DEBUG >= 1)
+            puts(dupmsg);
+        #endif
     }
 }
 
