@@ -38,7 +38,6 @@
 #define THROUGHPUT_TIMEOUT 3000000
 #define UDP_PACKET_COUNT 3
 #define UDP_PACKET_SIZE 128
-#define UDP_SERVER_PORT 1883
 
 static bool server_running = false;
 static sock_udp_t sock;
@@ -162,7 +161,7 @@ int db_measure_network_throughput(void)
             gnrc_netif_t *netif = gnrc_netif_iter(NULL);
             remote.netif = (uint16_t)netif->pid;
         }
-        remote.port = UDP_SERVER_PORT;
+        remote.port = CONFIG_DCA_UDP_SERVER_PORT;
         sock_udp_ep_t client = { .port = 1884, .family = AF_INET6 };
         if (sock_udp_create(&sock, &client, &remote, 0) < 0) {
             puts("Error creating socket");
