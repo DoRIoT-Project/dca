@@ -3,7 +3,6 @@ INCLUDES += -I$(APPDIR)
 APPLICATION = dca_coap_example
 
 BOARD ?= nucleo-f429zi
-BOARD_WHITELIST = esp32-wroom-32 native nucleo-f767zi msbiot nucleo-f429zi
 
 # Blacklisting msp430-based boards, as file syscalls are not supported
 BOARD_BLACKLIST :=  chronos \
