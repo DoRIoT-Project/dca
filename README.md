@@ -71,5 +71,8 @@ lwip is not supported at the moment.
 
 - `native`
 - `nucleo-f429zi`
+- `esp32-wroom-32`
+- `nrf52840dk`
+- `nrf52840dongle`
 
-Tested with *RIOT version 21.04*
+Tested with *RIOT version 21.07*
