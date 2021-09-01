@@ -9,10 +9,18 @@ Clone this repository somewhere, and set your `RIOTBASE` properly.
 
 The examples build as normal RIOT applications, but need to be configured with `make menuconfig` before building.
 
-	export RIOTBASE=foo/bar/baz    # if in doubt, check out RIOT version 21.04
+	export RIOTBASE=foo/bar/baz    # if in doubt, check out RIOT version 21.07
 	make BOARD=native menuconfig   # just save the default config to get started
 	make BOARD=native
 	make BOARD=native term
+
+## Using the Data Collection Agent in your RIOT Project
+
+In your RIOT application's `Makefile`, settle `EXTERNAL_MODULE_DIRS` properly.
+Refer to the examples, or to the "exernal modules" section in the RIOT docs.
+
+	EXTERNAL_MODULE_DIRS += <your external module folder (containing doriot_dca directory)>
+	USEMODULE += doriot_dca
 
 ## The Database
 

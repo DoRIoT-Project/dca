@@ -20,7 +20,7 @@ BOARD_INSUFFICIENT_MEMORY := arduino-duemilanove arduino-leonardo arduino-nano \
 
 RIOTBASE ?= $(CURDIR)/../../../..
 
-EXTERNAL_MODULE_DIRS += $(CURDIR)/../..
+EXTERNAL_MODULE_DIRS += $(CURDIR)/../../..
 
 ifeq ($(BOARD), esp32-wroom-32)
 	USEMODULE += esp_wifi

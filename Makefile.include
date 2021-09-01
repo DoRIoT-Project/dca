@@ -1,2 +1,2 @@
-USEMODULE_INCLUDES_doriot_dca := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))/include
+USEMODULE_INCLUDES_doriot_dca := $(LAST_MAKEFILEDIR)/include
 USEMODULE_INCLUDES += $(USEMODULE_INCLUDES_doriot_dca)
