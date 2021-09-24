@@ -30,7 +30,7 @@ static const coap_resource_t _resources[] = {
 };
 
 static const char *_link_params[] = {
-    ";ct=0;rt=\"count\";obs",
+    ";ct=0;rt=\"dca\"",
     NULL
 };
 
