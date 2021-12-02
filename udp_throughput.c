@@ -63,10 +63,10 @@ void *_udp_server_thread(void *args)
     _udp_data *udp_packet = malloc(sizeof(_udp_data));
 
     if (sock_udp_create(&sock_thread, &server, NULL, 0) < 0) {
-        puts("Error creating socket");
+        DEBUG("Error creating socket\n");
         return NULL;
     }
-    printf("Success: started UDP server on port %u\n", server.port);
+    DEBUG("Success: started UDP server on port %u\n", server.port);
     server_running = true;
     sock_udp_ep_t remote = { .family = AF_INET6 };
 
@@ -75,18 +75,18 @@ void *_udp_server_thread(void *args)
         if ((res = sock_udp_recv(&sock_thread, udp_packet,
                                  sizeof(_udp_data), SOCK_NO_TIMEOUT,
                                  &remote)) < 0) {
-            puts("Error while receiving1");
+            DEBUG("Error while receiving1\n");
             continue;
         }
         else if (res == 0) {
-            puts("No data received");
+            DEBUG("No data received\n");
             continue;
         }
         else if (res > 0) {
             if (udp_packet->id == START_TEST) {
                 DEBUG("packet count:%d\n", udp_packet->packet_count);
                 DEBUG("packet size:%d\n", udp_packet->packet_size);
-                DEBUG("Client Connected");
+                DEBUG("Client Connected\n");
                 char buf[udp_packet->packet_size];
                 udp_packet->id = TEST_ACK;
                 sock_udp_send(&sock_thread, udp_packet,
@@ -97,7 +97,7 @@ void *_udp_server_thread(void *args)
                     if ((res = sock_udp_recv(&sock_thread, buf,
                                              sizeof(buf), PACKET_TIMEOUT,
                                              &remote)) < 0) {
-                        printf("Error while receiving: %d\n", res);
+                        DEBUG("Error while receiving: %d\n", res);
                         break;
                     }
                     else {
@@ -153,7 +153,7 @@ int db_measure_network_throughput(void)
         node->next = NULL;
         ipv6_addr_to_str(addr_str, &(nce.ipv6), sizeof(addr_str));
         if (ipv6_addr_from_str((ipv6_addr_t *)&remote.addr, addr_str) == NULL) {
-            puts("Error: unable to parse destination address");
+            DEBUG("Error: unable to parse destination address\n");
             return 1;
         }
         if (ipv6_addr_is_link_local((ipv6_addr_t *)&remote.addr)) {
@@ -164,7 +164,7 @@ int db_measure_network_throughput(void)
         remote.port = CONFIG_DCA_UDP_SERVER_PORT;
         sock_udp_ep_t client = { .port = 1884, .family = AF_INET6 };
         if (sock_udp_create(&sock, &client, &remote, 0) < 0) {
-            puts("Error creating socket");
+            DEBUG("Error creating socket\n");
             return 1;
         }
         _udp_data *udp_packet = malloc(sizeof(_udp_data));
@@ -174,19 +174,19 @@ int db_measure_network_throughput(void)
         udp_packet->throughput = 0;
         char payload[UDP_PACKET_SIZE];
         if ((res = sock_udp_send(&sock, udp_packet, sizeof(udp_packet), &remote)) < 0) {
-            puts("could not send start_test packet");
+            DEBUG("could not send start_test packet");
             goto finish;
         }
         if ((res = sock_udp_recv(&sock, udp_packet,
                                  sizeof(_udp_data), PACKET_TIMEOUT,
                                  &remote)) < 0) {
-            puts("Error while receiving test ack");
+            DEBUG("Error while receiving test ack");
             goto finish;
         }
         if (udp_packet->id == TEST_ACK) {
             for (i = 0; i < udp_packet->packet_count; i++) {
                 if ((res = sock_udp_send(&sock, payload, sizeof(payload), &remote)) < 0) {
-                    puts("could not send udp payloads");
+                    DEBUG("could not send udp payloads");
                     goto finish;
                 }
                 if (i == 0) {
@@ -196,11 +196,11 @@ int db_measure_network_throughput(void)
             if ((res = sock_udp_recv(&sock, udp_packet,
                                      sizeof(_udp_data), THROUGHPUT_TIMEOUT,
                                      &remote)) < 0) {
-                puts("error receiving result");
+                DEBUG("error receiving result\n");
                 goto finish;
             }
             if (udp_packet->id == SUCCESS) {
-                printf("%s/ \n\tthroughput :%" PRIu32 " bytes/sec\n", addr_str,
+                DEBUG("%s/ \n\tthroughput :%" PRIu32 " bytes/sec\n", addr_str,
                        udp_packet->throughput);
                 node->throughput = udp_packet->throughput;
             }

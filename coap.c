@@ -70,8 +70,7 @@ static ssize_t _dca_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx
     /* get URI path and fetch the */
     size_t uripathlen = coap_get_uri_path(pdu, (uint8_t*)uripath);
     if(uripathlen <= 4) {
-        puts("invalid requst: ");
-        puts(uripath);
+        DEBUG("invalid requst: %s\n", uripath);
         return gcoap_response(pdu, buf, len, COAP_CODE_404);
     }
     dbpath = uripath + 4;
@@ -80,8 +79,7 @@ static ssize_t _dca_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx
     db_node_t node;
     int r = db_find_node_by_path(dbpath, &node);
     if(r < 0) {
-        puts("invalid requst: ");
-        puts(uripath);
+        DEBUG("invalid requst: %s\n", uripath);
         return gcoap_response(pdu, buf, len, COAP_CODE_404);
     }
     char val[DCA_COAP_STRBUF_SIZE];
@@ -123,7 +121,7 @@ static ssize_t _dca_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len, void *ctx
         return resp_len + vallen;
     }
     else {
-        puts("gcoap_cli: msg buffer too small");
+        DEBUG("gcoap_cli: msg buffer too small\n");
         return gcoap_response(pdu, buf, len, COAP_CODE_INTERNAL_SERVER_ERROR);
     }
 }

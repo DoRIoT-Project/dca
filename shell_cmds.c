@@ -28,7 +28,9 @@ static void _puts(const char *str)
 static int _dcaq(int argc, char **argv)
 {
     if (argc < 2) {
-        printf("Usage: %s <path>\nquery the DCA database\n", argv[0]);
+        _puts("Usage: ");
+        _puts(argv[0]); 
+        _puts("<path>\nquery the DCA database\n");
         return 1;
     }
     char *path = argv[1];
@@ -36,7 +38,9 @@ static int _dcaq(int argc, char **argv)
     int r = db_find_node_by_path(path, &node);
 
     if (r < 0) {
-        printf("path %s does not exist\n", path);
+        _puts("The path ");
+        _puts(path);
+        _puts(" does not exist\n");
         return 1;
     }
     db_node_type_t type = db_node_get_type(&node);
@@ -62,8 +66,9 @@ static int _dcaq(int argc, char **argv)
         putchar('\n');
     }
     else {
-        printf("node %s has invalid type\n", path);
-        return 1;
+        _puts("node ");
+        _puts(path);
+        _puts(" has invalid type\n");
     }
 
     return 0;
@@ -121,7 +126,9 @@ static int _tree(const char *path, uint8_t print_contents)
     int r = db_find_node_by_path(path, &node);
 
     if (r < 0) {
-        printf("path %s does not exist\n", path);
+        _puts("The path ");
+        _puts(path);
+        _puts(" does not exist\n");
         return 1;
     }
     return _tree_r(0, print_contents, &node);

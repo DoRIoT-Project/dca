@@ -227,14 +227,14 @@ static void _pinger(_ping_data_t *data)
                                  (uint16_t)data->num_sent++,
                                  NULL, data->datalen);
     if (pkt == NULL) {
-        puts("error: packet buffer full");
+        DEBUG("error: packet buffer full\n");
         return;
     }
     databuf = (uint8_t *)(pkt->data) + sizeof(icmpv6_echo_t);
     memset(databuf, data->pattern, data->datalen);
     tmp = gnrc_ipv6_hdr_build(pkt, NULL, &data->host);
     if (tmp == NULL) {
-        puts("error: packet buffer full");
+        DEBUG("error: packet buffer full\n");
         goto error_exit;
     }
     pkt = tmp;
@@ -244,7 +244,7 @@ static void _pinger(_ping_data_t *data)
     if (data->netif != NULL) {
         tmp = gnrc_netif_hdr_build(NULL, 0, NULL, 0);
         if (tmp == NULL) {
-            puts("error: packet buffer full");
+            DEBUG("error: packet buffer full\n");
             goto error_exit;
         }
         gnrc_netif_hdr_set_netif(tmp->data, data->netif);
@@ -256,7 +256,7 @@ static void _pinger(_ping_data_t *data)
     if (!gnrc_netapi_dispatch_send(GNRC_NETTYPE_IPV6,
                                    GNRC_NETREG_DEMUX_CTX_ALL,
                                    pkt)) {
-        puts("error: unable to send ICMPv6 echo request");
+        DEBUG("error: unable to send ICMPv6 echo request\n");
         goto error_exit;
     }
     return;
@@ -327,9 +327,7 @@ static void _print_reply(_ping_data_t *data, gnrc_pktsnip_t *icmpv6,
             DEBUG(" time=%lu.%03lu ms", (long unsigned)triptime / 1000,
                   (long unsigned)triptime % 1000);
         }
-        #if (DEBUG >= 1)
-            puts(dupmsg);
-        #endif
+        DEBUG("%s\n", dupmsg);
     }
 }
 
@@ -343,7 +341,7 @@ static void _handle_reply(_ping_data_t *data, gnrc_pktsnip_t *pkt)
     ipv6 = gnrc_pktsnip_search_type(pkt, GNRC_NETTYPE_IPV6);
     icmpv6 = gnrc_pktsnip_search_type(pkt, GNRC_NETTYPE_ICMPV6);
     if ((ipv6 == NULL) || (icmpv6 == NULL)) {
-        puts("No IPv6 or ICMPv6 header found in reply");
+        DEBUG("No IPv6 or ICMPv6 header found in reply\n");
         return;
     }
     ipv6_hdr = ipv6->data;
@@ -389,7 +387,7 @@ static int _finish(_ping_data_t *data)
               data->tmax / 2000, ((data->tmax) / 2) % 1000);
         node->latency = tavg;
     }
-    printf("%s/ \n\tlatency :%u.%03u ms\n\tpacket_loss:%lu%%\n", data->hostname,
+    DEBUG("%s/ \n\tlatency :%u.%03u ms\n\tpacket_loss:%lu%%\n", data->hostname,
            (uint16_t)(node->latency / 2000), (uint16_t)(node->latency / 2) % 1000, tmp);
     if (!linked_list_node_exists(&node->addr)) {
         linked_list_update_latency(node);

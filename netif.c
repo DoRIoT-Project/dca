@@ -77,11 +77,12 @@ db_node_type_t _netif_node_gettype(const db_node_t *node);
 size_t _netif_node_getsize(const db_node_t *node);
 size_t _netif_node_getstr_value(const db_node_t *node, char *value, size_t bufsize);
 int32_t _netif_node_getint_value(const db_node_t *node);
+float _netif_node_getfloat_value(const db_node_t *node);
 char *_netif_node_get_field_name(const db_node_t *node, char name[DB_NODE_NAME_MAX]);
 char *_netif_node_get_sub_field_name(const db_node_t *node, char name[DB_NODE_NAME_MAX]);
-int32_t _netif_get_latency(uint8_t _num_neighbours, uint8_t _netif_sub_field_count, char *value);
-int32_t _netif_get_throughput(uint8_t _num_neighbours, uint8_t _netif_sub_field_count, char *value);
-int32_t _netif_get_packetloss(uint8_t _num_neighbours, uint8_t _netif_sub_field_count, char *value);
+float _netif_get_latency(uint8_t _num_neighbours, uint8_t _netif_sub_field_count);
+float _netif_get_throughput(uint8_t _num_neighbours, uint8_t _netif_sub_field_count);
+float _netif_get_packetloss(uint8_t _num_neighbours, uint8_t _netif_sub_field_count);
 int _netif_get_ip(uint8_t _num_neighbours, char *addr_str);
 int _netif_node_add_list(ipv6_addr_t *ip_addr);
 
@@ -92,8 +93,9 @@ static db_node_ops_t _db_netif_node_ops = {
     .get_type_fn = _netif_node_gettype,
     .get_size_fn = _netif_node_getsize,
     .get_int_value_fn = _netif_node_getint_value,
-    .get_float_value_fn = NULL,
-    .get_str_value_fn = _netif_node_getstr_value};
+    .get_float_value_fn = _netif_node_getfloat_value,
+    .get_str_value_fn = _netif_node_getstr_value,
+};
 
 /* netif node constructor */
 void _netif_node_init(db_node_t *node, netif_t *iface, uint8_t is_root)
@@ -360,7 +362,7 @@ db_node_type_t _netif_node_gettype(const db_node_t *node)
     /* for latency, packet loss,throughput  */
     else if (_netif_sub_field_count == 2 || _netif_sub_field_count == 3 || _netif_sub_field_count == 4)
     {
-        return db_node_type_str;
+        return db_node_type_float;
     }
     else
     {
@@ -406,26 +408,23 @@ int _netif_get_ip(uint8_t _num_neighbours, char *addr_str)
     return strnlen(addr_str, IPV6_ADDR_MAX_STR_LEN);
 }
 
-int32_t _netif_get_latency(uint8_t _num_neighbours, uint8_t _netif_sub_field_count, char *value)
+float _netif_get_latency(uint8_t _num_neighbours, uint8_t _netif_sub_field_count)
 {
     int32_t lat = (linked_list_read(_netif_sub_field_count, _num_neighbours));
-    sprintf(value, "%" PRIu32 ".%03" PRIu32 " ms", lat / 2000, (lat / 2) % 1000);
-    return strlen(value);
+    return lat/2000.0f;
 }
 
 
-int32_t _netif_get_packetloss(uint8_t _num_neighbours, uint8_t _netif_sub_field_count, char *value)
+float _netif_get_packetloss(uint8_t _num_neighbours, uint8_t _netif_sub_field_count)
 {
     int32_t val = (linked_list_read(_netif_sub_field_count, _num_neighbours));
-    sprintf(value, "%"PRIu32" %%", val);
-    return strlen(value);
+    return (float) val;
 }
 
-int32_t _netif_get_throughput(uint8_t _num_neighbours, uint8_t _netif_sub_field_count, char *value)
+float _netif_get_throughput(uint8_t _num_neighbours, uint8_t _netif_sub_field_count)
 {
     int32_t val = (linked_list_read(_netif_sub_field_count, _num_neighbours));
-    sprintf(value, "%"PRIu32" bytes/sec", val);
-    return strlen(value);
+    return (float) val;
 }
 
 size_t _netif_node_getsize(const db_node_t *node)
@@ -446,10 +445,10 @@ size_t _netif_node_getsize(const db_node_t *node)
     {
         return sizeof(int32_t);
     }
-    /* for packet loss,throughput */
+    /* for packet latency, loss, throughput */
     else if (private_data->is_root == 0u && _netif_sub_field_count < QOS_COUNT)
     {
-        return sizeof(int32_t);
+        return sizeof(float);
     }
     else
     {
@@ -480,22 +479,30 @@ size_t _netif_node_getstr_value(const db_node_t *node, char *value, size_t bufsi
     {
         return (int32_t)_netif_get_ip(_num_neighbours, value);
     }
+    return 88;
+}
+
+float _netif_node_getfloat_value(const db_node_t *node) {
+    assert(node);
+    _db_netif_node_private_data_t *private_data =
+        (_db_netif_node_private_data_t *)node->private_data.u8;
+    assert(private_data->iface != NULL);
     /* for latency*/
-    else if (_netif_sub_field_count == 2)
+    if (_netif_sub_field_count == 2)
     {
-        return (int32_t)_netif_get_latency(_num_neighbours, _netif_sub_field_count, value);
+        return (int32_t)_netif_get_latency(_num_neighbours, _netif_sub_field_count);
     }
     /* for packetloss*/
     else if (_netif_sub_field_count == 3)
     {
-        return (int32_t)_netif_get_packetloss(_num_neighbours, _netif_sub_field_count, value);
+        return (int32_t)_netif_get_packetloss(_num_neighbours, _netif_sub_field_count);
     }
     /* for throughput*/
     else if (_netif_sub_field_count == 4)
     {
-        return (int32_t)_netif_get_throughput(_num_neighbours, _netif_sub_field_count, value);
+        return (int32_t)_netif_get_throughput(_num_neighbours, _netif_sub_field_count);
     }
-    return 88;
+    return 0.0;
 }
 
 char *_netif_node_get_field_name(const db_node_t *node, char name[DB_NODE_NAME_MAX])
