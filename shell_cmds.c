@@ -74,27 +74,35 @@ static int _dcaq(int argc, char **argv)
     return 0;
 }
 
-static int _tree_r(int8_t depth, uint8_t print_contents, db_node_t *node)
-{
-    assert(node);
+static void _print_node_name(db_node_t *node, uint8_t depth) {
     char name[DB_NODE_NAME_MAX];
-    db_node_type_t type = db_node_get_type(node);
-
+    
     db_node_get_name(node, name);
     for (int i = 0; i < depth; i++) {
         _puts("  ");
     }
     _puts("- ");
     _puts(name);
+}
+
+static void _print_node_content(db_node_t *node) {
+    char str[DCA_SHELL_STRBUF_SIZE];
+    db_node_value_to_str(node, str, DCA_SHELL_STRBUF_SIZE);
+    _puts(": ");
+    _puts(str);
+}
+
+static int _tree_r(int8_t depth, uint8_t print_contents, db_node_t *node)
+{
+    _print_node_name(node, depth);
+    db_node_type_t type = db_node_get_type(node);
+
     if (type == db_node_type_int
         || type == db_node_type_float
         || type == db_node_type_str) {
         /* recursion end (file), print contents and return */
         if (print_contents) {
-            char str[DCA_SHELL_STRBUF_SIZE];
-            db_node_value_to_str(node, str, DCA_SHELL_STRBUF_SIZE);
-            _puts(": ");
-            _puts(str);
+            _print_node_content(node);
         }
         putchar('\n');
     }
@@ -111,11 +119,6 @@ static int _tree_r(int8_t depth, uint8_t print_contents, db_node_t *node)
             }
             db_node_get_next_child(node, &child);
         }
-    }
-    else {
-        _puts("node ");
-        _puts(name);
-        _puts(" has invalid type\n");
     }
     return 0;
 }
