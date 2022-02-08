@@ -75,7 +75,7 @@
     #if defined(BOARD_ESP32_WROOM_32)
         #define DCA_BOARD_NVRAM 16*kB
     #elif defined(BOARD_NUCLEO_F429ZI)
-        #define DCA_BOARD_RAM 2*MB
+        #define DCA_BOARD_NVRAM 2*MB
     #else
         #define DCA_BOARD_NVRAM 0*B
     #endif
